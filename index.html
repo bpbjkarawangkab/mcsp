@@ -896,7 +896,8 @@ let dashboardLoaded = false;
 
 (function init(){
   const dl=document.getElementById("opdDatalist");
-  OPD_LIST.forEach(o=>{
+  // Urutkan A-Z berdasarkan nama (salinan, OPD_LIST asli tidak diubah)
+  [...OPD_LIST].sort((a,b)=>a.label.localeCompare(b.label,"id",{sensitivity:"base"})).forEach(o=>{
     const opt=document.createElement("option");
     opt.value=o.label;
     dl.appendChild(opt);
