@@ -1,0 +1,3021 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIBANGUNIN 2026 — Input Data</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F0EDE6;--surface:#FAFAF7;--surface2:#F4F1EA;
+  --border:#D4CFC5;--text:#1A1916;--text-muted:#7A7670;--text-light:#B0ABA4;
+  --green:#1E5C3A;--green-light:#D6EDE0;--green-mid:#2E7D52;
+  --blue:#1A3F6F;--red:#8B1A1A;--amber:#7A4F00;--amber-light:#FFF3CC;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+
+.header{background:var(--green);padding:0 32px;display:flex;align-items:stretch;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.header-brand{display:flex;flex-direction:column;justify-content:center;padding:16px 24px 16px 0;border-right:1px solid rgba(255,255,255,.15);margin-right:24px}
+.header-brand .logo{font-family:var(--mono);font-size:20px;font-weight:600;color:#fff;letter-spacing:.02em}
+.header-brand .tagline{font-size:11px;color:rgba(255,255,255,.6);margin-top:2px;font-weight:300}
+.header-meta{display:flex;align-items:center;gap:12px;flex:1}
+.header-chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:3px;padding:4px 10px;font-size:11px;font-family:var(--mono);color:rgba(255,255,255,.8);white-space:nowrap}
+.header-chip.active{background:rgba(255,255,255,.2);color:#fff;font-weight:600}
+.header-right{margin-left:auto}
+.last-update{font-size:11px;color:rgba(255,255,255,.5);font-family:var(--mono)}
+
+.container{max-width:1700px;margin:0 auto;padding:24px 24px 100px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow: hidden;margin-bottom:16px}
+.panel-body{padding:16px 18px}
+
+.top-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.top-bar select,.top-bar #opdInput{flex:1;max-width:420px;padding:9px 12px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:var(--sans);background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+.top-bar select:focus,.top-bar #opdInput:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(30,92,58,.08)}
+.btn-primary{padding:9px 20px;background:var(--green);color:#fff;border:none;border-radius:5px;font-size:13px;font-family:var(--sans);font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s,transform .1s}
+.btn-primary:hover{background:var(--green-mid)}
+.btn-primary:active{transform:scale(.98)}
+.btn-search{padding:9px 14px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:5px;font-size:12px;font-family:var(--sans);font-weight:500;cursor:pointer;white-space:nowrap;transition:all .15s}
+.btn-search:hover{background:var(--green-light);border-color:var(--green);color:var(--green)}
+.divider-v{width:1px;height:28px;background:var(--border);margin:0 4px}
+.search-bar{display:flex;gap:8px;align-items:center}
+.search-bar input{width:200px;padding:9px 11px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:var(--mono);background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+.search-bar input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(30,92,58,.08)}
+.search-bar input::placeholder{font-family:var(--sans);color:var(--text-light)}
+.search-result-info{font-size:11px;color:var(--text-muted);font-family:var(--mono)}
+.btn-reset{font-size:11px;color:var(--text-muted);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:var(--sans);padding:0}
+.btn-reset:hover{color:var(--red)}
+
+.info-bar{background:var(--green-light);border:1px solid #A8D5B8;border-radius:6px;padding:9px 14px;font-size:12px;color:var(--green);display:flex;align-items:center;gap:10px;margin-bottom:14px;top:147px;z-index:89;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05)}
+.info-bar .dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+
+.tbl-wrap{overflow: auto; /* Mengaktifkan scroll horizontal & vertikal internal */
+  max-height: 65vh; /* Batasi tinggi tabel agar tidak menabrak tombol simpan di bawah */
+  padding: 0 18px 14px;
+  border-radius: 4px}
+.tbl{width:100%;border-collapse:collapse;font-size:11.5px}
+.tbl thead tr:first-child th{background:#1A1916;color:#fff;padding:8px 9px;text-align:center;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;border:1px solid rgba(255,255,255,.12)}
+.tbl thead tr:nth-child(2) th,.tbl thead tr:nth-child(3) th{background:#1A1916;color:#fff;padding:7px 9px;text-align:center;font-size:9px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+.tbl td{padding:5px 7px;border:1px solid var(--border);vertical-align:middle;background:#fff}
+.tbl tr:hover td{background:#F7FBF8}
+/* highlight baris Pengadaan Langsung */
+.tbl tr.pl-row td{background:#FFFBF0}
+.tbl tr.pl-row:hover td{background:#FFF7E0}
+
+.no-col{width:26px;text-align:center;color:var(--text-muted);font-family:var(--mono);font-size:11px}
+.rup-col{min-width:90px;font-family:var(--mono);font-size:10.5px;color:var(--text-muted)}
+.nama-col{min-width:180px;font-weight:500;font-size:12px;color:var(--text)}
+
+.tbl input[type=text],.tbl input[type=number],.tbl select{
+  padding:5px 8px;font-size:11.5px;border-radius:4px;min-width:80px;
+  border:1px solid var(--border);background:#fff;color:var(--text);
+  font-family:var(--sans);outline:none;width:100%;
+  transition:border-color .12s,box-shadow .12s;
+}
+.tbl input:focus,.tbl select:focus{border-color:var(--green);box-shadow:0 0 0 2px rgba(30,92,58,.08)}
+.tbl input[type=number]{max-width:70px;min-width:60px}
+
+/* ── Date input wrapper with calendar icon ── */
+.date-wrap{position:relative;display:inline-flex;align-items:center;width:100%}
+.date-wrap input[type=text]{
+  font-family:var(--mono);font-size:11px;min-width:100px;
+  letter-spacing:.03em;padding-right:28px;
+}
+.date-wrap input[type=date]{
+  position:absolute;right:0;top:0;bottom:0;width:32px;
+  opacity:0;padding:0;border:none;
+  /* keep full width so the calendar icon is clickable */
+  z-index:2;
+}
+.cal-icon{position:absolute;right:6px;font-size:13px;pointer-events:none;color:var(--text-muted);z-index:1}
+
+.rp-wrap{display:flex;align-items:stretch;border:1px solid var(--border);border-radius:4px;overflow:hidden;background:#fff;transition:border-color .12s,box-shadow .12s}
+.rp-wrap:focus-within{border-color:var(--green);box-shadow:0 0 0 2px rgba(30,92,58,.08)}
+.rp-prefix{padding:0 7px;font-size:10px;color:var(--text-muted);font-family:var(--mono);background:var(--surface2);border-right:1px solid var(--border);display:flex;align-items:center;white-space:nowrap;flex-shrink:0}
+.rp-wrap input{border:none!important;box-shadow:none!important;border-radius:0!important;padding:5px 7px;flex:1;min-width:90px;color:var(--text)}
+.rp-wrap input:focus{outline:none}
+
+.pct-wrap{display:flex;align-items:center;gap:3px}
+.pct-wrap input{max-width:55px}
+.pct-wrap em{font-size:10px;color:var(--text-muted);font-style:normal;font-family:var(--mono)}
+.pct-bar-bg{height:3px;background:var(--border);border-radius:2px;margin-top:3px;min-width:55px}
+.pct-bar{height:3px;border-radius:2px;transition:width .3s}
+
+/* Metode badge di kolom readonly */
+.metode-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:4px;font-size:10.5px;font-weight:600;font-family:var(--mono);white-space:nowrap}
+.metode-badge.tender{background:#EBF4FF;color:var(--blue);border:1px solid #B3D1F5}
+.metode-badge.pl{background:var(--amber-light);color:var(--amber);border:1px solid #FFDF7E}
+.metode-badge.other{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)}
+
+/* Pengadaan Langsung extra field */
+.pl-extra{display:flex;flex-direction:column;gap:4px;min-width:130px}
+.pl-label{font-size:9px;color:var(--amber);font-family:var(--mono);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.pl-hidden{display:none}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:500;font-family:var(--mono);white-space:nowrap}
+.badge.sudah{background:var(--green-light);color:var(--green);border:1px solid #A8D5B8}
+.badge.belum{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)}
+.update-info{font-size:9.5px;color:var(--text-light);font-family:var(--mono);white-space:nowrap;margin-top:2px}
+
+.empty{padding:40px;text-align:center;color:var(--text-muted)}
+.empty .icon{font-size:32px;margin-bottom:10px;opacity:.4}
+
+.submit-bar{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 -4px 16px rgba(0,0,0,.06);z-index:40}
+.submit-info{font-size:12px;color:var(--text-muted);line-height:1.5}
+.submit-info strong{color:var(--text);font-size:13px;display:block;margin-bottom:2px}
+.btn-submit{padding:10px 28px;background:var(--green);color:#fff;border:none;border-radius:5px;font-size:13px;font-family:var(--sans);font-weight:600;cursor:pointer;transition:background .15s,transform .1s}
+.btn-submit:hover{background:var(--green-mid)}
+.btn-submit:active{transform:scale(.98)}
+.btn-submit:disabled{background:var(--border);cursor:not-allowed;transform:none}
+
+.toast{position:fixed;bottom:80px;right:24px;padding:11px 16px;border-radius:6px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:8px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.15);transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:340px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:var(--green);color:#fff}
+.toast.error{background:var(--red);color:#fff}
+.toast.info{background:var(--text);color:#fff}
+
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(240,237,230,.75);backdrop-filter:blur(3px);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.loading-overlay.show{display:flex}
+.spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:12px;color:var(--text-muted);font-family:var(--mono)}
+
+/* Legend */
+.legend{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:8px 18px 10px;border-top:1px solid var(--border);background:var(--surface2)}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--text-muted)}
+.legend-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+
+/* Pagination */
+.paging-bar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-top:1px solid var(--border);background:var(--surface);flex-wrap:wrap}
+.paging-info{font-size:11.5px;color:var(--text-muted);font-family:var(--mono);white-space:nowrap}
+.paging-info strong{color:var(--text)}
+.paging-size{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-muted)}
+.paging-size select{padding:3px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;font-family:var(--mono);background:#fff;color:var(--text);outline:none;cursor:pointer}
+.paging-size select:focus{border-color:var(--green)}
+.paging-nav{display:flex;align-items:center;gap:4px;margin-left:auto}
+.paging-btn{padding:4px 10px;border:1px solid var(--border);border-radius:4px;font-size:12px;font-family:var(--mono);background:#fff;color:var(--text);cursor:pointer;transition:all .12s;min-width:32px;text-align:center}
+.paging-btn:hover:not(:disabled){background:var(--green-light);border-color:var(--green);color:var(--green)}
+.paging-btn.active{background:var(--green);color:#fff;border-color:var(--green);font-weight:600}
+.paging-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* Auto-resize textarea — tampilan identik dengan input[type=text] di tabel */
+.auto-ta{
+  display:block;width:100%;min-height:32px;
+  padding:5px 8px;font-size:11.5px;font-family:var(--sans);
+  border:1px solid var(--border);border-radius:4px;
+  background:#fff;color:var(--text);
+  outline:none;resize:none;overflow:hidden;line-height:1.5;
+  transition:border-color .12s,box-shadow .12s;
+}
+.auto-ta:focus{border-color:var(--green);box-shadow:0 0 0 2px rgba(30,92,58,.08)}
+.tbl tr.pl-row .auto-ta{background:#FFFBF0}
+.tbl tr.pl-row:hover .auto-ta{background:#FFF7E0}
+
+/* ── RUP tidak ditemukan di SIRUP ── */
+.tbl tr.rup-orphan td{background:#FFF0F0!important}
+.tbl tr.rup-orphan:hover td{background:#FFE5E5!important}
+.tbl tr.rup-orphan .auto-ta{background:#FFF0F0!important}
+.rup-warn{display:flex;flex-direction:column;gap:5px}
+.rup-warn-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;font-family:var(--mono);background:#FFDEDE;color:#8B1A1A;border:1px solid #F5AAAA;white-space:nowrap}
+.btn-update-rup{padding:4px 10px;font-size:10.5px;font-family:var(--sans);font-weight:600;background:#8B1A1A;color:#fff;border:none;border-radius:4px;cursor:pointer;white-space:nowrap;transition:background .15s}
+.btn-update-rup:hover{background:#6B1010}
+
+/* Modal update RUP */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:10px;padding:28px 28px 22px;max-width:460px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+.modal-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px}
+.modal-sub{font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:18px}
+.modal-field label{display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.modal-field input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:var(--mono);outline:none;transition:border-color .12s}
+.modal-field input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(30,92,58,.08)}
+.modal-note{font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.5;padding:8px 10px;background:var(--surface2);border-radius:4px;border-left:3px solid #F5AAAA}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.btn-modal-cancel{padding:8px 18px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:var(--sans);cursor:pointer}
+.btn-modal-save{padding:8px 18px;background:var(--green);color:#fff;border:none;border-radius:5px;font-size:13px;font-family:var(--sans);font-weight:600;cursor:pointer}
+.btn-modal-delete{padding:8px 18px;background:#8B1A1A;color:#fff;border:none;border-radius:5px;font-size:13px;font-family:var(--sans);font-weight:600;cursor:pointer;transition:background .15s}
+.btn-modal-delete:hover{background:#6B1010}
+.btn-modal-delete:disabled{background:var(--border);cursor:not-allowed}
+.btn-modal-save:hover{background:var(--green-mid)}
+.info-bar.warn{background:#FFF0F0;border-color:#F5AAAA;color:#8B1A1A}
+.info-bar.warn .dot{background:#8B1A1A}
+
+/* Judul tabel */
+.tbl-title{padding:14px 18px 4px;font-size:13px;font-weight:600;color:var(--text)}
+.tbl-title span{font-size:11px;font-weight:400;color:var(--text-muted);margin-left:8px}
+
+/* Modal Login */
+.login-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;align-items:center;justify-content:center}
+.login-overlay.show{display:flex}
+.login-box{background:#fff;border-radius:12px;padding:32px;max-width:400px;width:90%;box-shadow:0 12px 48px rgba(0,0,0,.2);position:relative}
+.btn-close-login{position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;font-size:16px;color:var(--text-muted);width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:5px;transition:background .12s,color .12s;line-height:1}
+.btn-close-login:hover{background:var(--surface2);color:var(--text)}
+.login-logo{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--green);margin-bottom:4px}
+.login-tagline{font-size:11px;color:var(--text-muted);margin-bottom:20px;line-height:1.4}
+.login-opd-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;padding:8px 12px;background:var(--surface2);border-radius:6px;border-left:3px solid var(--green)}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.login-field input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:var(--mono);outline:none;transition:border-color .12s}
+.login-field input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(30,92,58,.08)}
+.login-admin-toggle{display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:12px;color:var(--text-muted);cursor:pointer;user-select:none}
+.login-admin-toggle input{width:14px;height:14px;cursor:pointer;accent-color:var(--green)}
+.login-error{font-size:11.5px;color:var(--red);background:#FFF0F0;border:1px solid #F5AAAA;border-radius:4px;padding:8px 10px;margin-bottom:12px;display:none}
+.btn-login{width:100%;padding:11px;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:13px;font-family:var(--sans);font-weight:600;cursor:pointer;transition:background .15s}
+.btn-login:hover{background:var(--green-mid)}
+.btn-login:disabled{background:var(--border);cursor:not-allowed}
+.login-hint{font-size:10.5px;color:var(--text-light);text-align:center;margin-top:12px}
+
+/* Kolom nama penyedia & nilai kontrak — cukup lebar untuk badge */
+.tbl td:has(> div > .src-readonly){ min-width:150px }
+
+/* Nama pekerjaan clickable */
+.nama-link{
+  font-size:12px;font-weight:500;color:var(--green);cursor:pointer;
+  text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;
+  transition:color .12s;display:block;line-height:1.4;
+}
+.nama-link:hover{color:var(--green-mid)}
+
+/* Status badge di tabel */
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--mono);white-space:nowrap;margin-top:4px}
+.status-badge.filled{background:var(--green-light);color:var(--green);border:1px solid #A8D5B8}
+.status-badge.empty{background:var(--surface2);color:var(--text-light);border:1px solid var(--border)}
+
+/* Modal Input Detail Paket */
+.detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto}
+.detail-overlay.show{display:flex}
+.detail-modal{background:#fff;border-radius:12px;width:100%;max-width:760px;box-shadow:0 16px 60px rgba(0,0,0,.25);margin:auto;overflow:hidden}
+.detail-header{background:var(--green);padding:20px 24px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.detail-header-left{}
+.detail-rup{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.7);margin-bottom:4px}
+.detail-nama{font-size:15px;font-weight:600;color:#fff;line-height:1.3}
+.detail-meta{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.detail-chip{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.85)}
+.btn-close-detail{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s}
+.btn-close-detail:hover{background:rgba(255,255,255,.25)}
+.detail-body{padding:24px;display:grid;grid-template-columns:1fr 1fr;column-gap:16px;row-gap:14px;background:#fff}
+.detail-body.single{grid-template-columns:1fr}
+.detail-field{display:flex;flex-direction:column;gap:5px;background:#fff;padding:0}
+.detail-field.full{grid-column:1/-1}
+.detail-field label{font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em}
+.detail-field label .src-tag{font-size:9px;font-weight:500;color:var(--blue);background:#EBF4FF;padding:1px 5px;border-radius:3px;margin-left:4px;text-transform:none;letter-spacing:0}
+.detail-field label .req-tag{font-size:9px;color:var(--red);margin-left:2px}
+.detail-field input[type=text],.detail-field input[type=number],.detail-field select,.detail-field textarea{
+  padding:9px 11px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:var(--sans);
+  outline:none;transition:border-color .12s,box-shadow .12s;color:var(--text);background:#fff;width:100%;
+}
+.detail-field input:focus,.detail-field select:focus,.detail-field textarea:focus{
+  border-color:var(--green);box-shadow:0 0 0 3px rgba(30,92,58,.08);
+}
+.detail-field input:read-only{background:var(--surface2);color:var(--text-muted);cursor:not-allowed}
+.detail-field textarea{resize:vertical;min-height:72px;line-height:1.5}
+.detail-field .date-wrap input[type=text]{font-family:var(--mono);font-size:12px;letter-spacing:.03em}
+.detail-divider{grid-column:1/-1;border:none;border-top:1px solid var(--border);margin:4px 0}
+.detail-section-title{
+  grid-column:1/-1;font-size:10.5px;font-weight:700;color:var(--green);
+  text-transform:uppercase;letter-spacing:.08em;
+  padding:6px 10px;background:var(--green-light);border-radius:4px;
+  border-left:3px solid var(--green);
+}
+.detail-pct-wrap{display:flex;align-items:center;gap:8px}
+.detail-pct-wrap input{flex:1}
+.detail-pct-wrap em{font-size:12px;color:var(--text-muted);font-style:normal}
+.detail-pct-bar{height:4px;background:var(--border);border-radius:2px;margin-top:4px}
+.detail-pct-fill{height:4px;border-radius:2px;transition:width .3s}
+.detail-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface2)}
+.detail-footer-left{font-size:11px;color:var(--text-muted);line-height:1.4}
+.detail-footer-left strong{color:var(--text);font-size:12px;display:block}
+.btn-detail-save{padding:10px 28px;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:13px;font-family:var(--sans);font-weight:600;cursor:pointer;transition:background .15s}
+.btn-detail-save:hover{background:var(--green-mid)}
+.btn-detail-save:disabled{background:var(--border);cursor:not-allowed}
+.btn-detail-cancel{padding:10px 18px;background:#fff;color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:var(--sans);cursor:pointer;transition:all .12s}
+.btn-detail-cancel:hover{background:var(--surface2)}
+/* ========================================================
+   FREEZE PANE HEADER HITAM (HANYA HEADER TABEL)
+   ======================================================== */
+.tbl thead tr th {
+  position: sticky;
+  z-index: 10;
+  background: #1A1916 !important; /* Warna hitam pekat agar data tidak bocor ke atas */
+}
+
+/* Karena header menggunakan rowspan bertingkat, kunci baris berdasarkan urutan */
+.tbl thead tr:nth-child(1) th {
+  top: 0;
+}
+.tbl thead tr:nth-child(2) th {
+  top: 30px; /* Mengunci baris kedua tepat di bawah baris pertama header */
+}
+/* Mengubah background input Sub Kegiatan, Output, dan Keterangan menjadi putih permanen */
+.tbl tbody tr textarea[data-k="bidang"],
+.tbl tbody tr textarea[data-k="output"],
+.tbl tbody tr textarea[data-k="keterangan"] {
+  background-color: #FFFFFF !important;
+  background: #FFFFFF !important;
+  color: #1A1916 !important;
+}
+
+/* ════════ TAB NAVIGATION ════════ */
+.tab-nav{background:#162E22;display:flex;gap:2px;padding:0 32px;position:sticky;top:62px;z-index:99}
+.tab-btn{padding:11px 20px;background:transparent;border:none;color:rgba(255,255,255,.55);font-size:13px;font-family:var(--sans);font-weight:500;cursor:pointer;border-bottom:3px solid transparent;transition:all .15s}
+.tab-btn:hover{color:rgba(255,255,255,.85)}
+.tab-btn.active{color:#fff;border-bottom-color:var(--green-mid);background:rgba(255,255,255,.04)}
+.subtab-nav{display:flex;gap:2px;margin-bottom:14px}
+.subtab-btn{padding:9px 18px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);font-size:12.5px;font-family:var(--sans);font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;border-bottom:none;transition:all .15s}
+.subtab-btn:hover{color:var(--text);background:#fff}
+.subtab-btn.active{background:var(--surface);color:var(--green);box-shadow:0 -2px 0 var(--green) inset}
+
+.link-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:3px;font-size:9.5px;font-weight:600;font-family:var(--mono);white-space:nowrap}
+.link-badge.linked{background:var(--green-light);color:var(--green);border:1px solid #A8D5B8}
+.link-badge.standalone{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)}
+.pokir-badge{font-size:9px;font-family:var(--mono);padding:1px 5px;border-radius:3px;margin-left:5px;white-space:nowrap}
+.pokir-badge.auto{background:#EBF4FF;color:var(--blue);border:1px solid #B3D1F5}
+.pokir-badge.manual{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)}
+
+/* ════════ DASHBOARD ════════ */
+.dash-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px}
+.dash-card .dash-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:8px}
+.dash-card .dash-value{font-size:26px;font-weight:600;color:var(--text);font-family:var(--mono);line-height:1.1}
+.dash-card .dash-sub{font-size:11px;color:var(--text-muted);margin-top:6px}
+.dash-card.green .dash-value{color:var(--green)}
+.dash-card.amber .dash-value{color:var(--amber)}
+.dash-card.red .dash-value{color:var(--red)}
+
+.dash-progress-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.dash-progress-bg{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.dash-progress-fill{height:100%;border-radius:3px;transition:width .4s}
+.dash-progress-pct{font-size:12px;font-family:var(--mono);font-weight:600;min-width:38px;text-align:right}
+
+.dash-opd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.dash-opd-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.dash-opd-card:hover{border-color:var(--green);box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.dash-opd-card.expanded{border-color:var(--green);box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.dash-opd-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.dash-opd-name{font-size:13px;font-weight:600;color:var(--text)}
+.dash-opd-badge{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:10px;white-space:nowrap}
+.dash-opd-badge.ok{background:var(--green-light);color:var(--green)}
+.dash-opd-badge.warn{background:var(--amber-light);color:var(--amber)}
+.dash-opd-stats{display:flex;gap:16px;font-size:11px;color:var(--text-muted);margin-bottom:8px}
+.dash-opd-stats strong{color:var(--text);font-family:var(--mono)}
+.dash-opd-detail{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:none}
+.dash-opd-detail.show{display:block}
+.dash-opd-detail-row{display:flex;justify-content:space-between;font-size:11.5px;padding:4px 0;color:var(--text-muted)}
+.dash-opd-detail-row strong{color:var(--text);font-family:var(--mono)}
+
+.dash-refresh-info{font-size:11px;color:var(--text-muted);text-align:right;margin-bottom:10px;font-family:var(--mono)}
+</style>
+</head>
+<body>
+
+<script>
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbyilqCIwxA5-n2t-4Mr2uFTGqC5aBLfuG5Q8rGnMU_oU1rvPQ4co4_F6KEozJvSglxM/exec";
+const OPD_LIST=[{key:"KEL_TANJUNGPURA",label:"Kelurahan Tanjungpura"},{key:"KEC_CIAMPEL",label:"Kecamatan Ciampel"},{key:"KEC_TIRTAJAYA",label:"Kecamatan Tirtajaya"},{key:"PKM_KALANGSARI",label:"UPTD Puskesmas Kalangsari"},{key:"KEC_RAWAMERTA",label:"Kecamatan Rawamerta"},{key:"PKM_KARAWANG_KULON",label:"UPTD Puskesmas Karawang Kulon"},{key:"KEL_TUNGGAKJATI",label:"Kelurahan Tunggakjati"},{key:"BAG_KESEJAHTERAAN_RAKYAT",label:"Bagian Kesejahteraan Rakyat"},{key:"PKM_JOMIN",label:"UPTD Puskesmas Jomin"},{key:"KEC_MAJALAYA",label:"Kecamatan Majalaya"},{key:"RSUD_RENGASDENGKLOK",label:"Rumah Sakit Umum Daerah Rengasdengklok"},{key:"PKM_BALONGSARI",label:"UPTD Puskesmas Balongsari"},{key:"PKM_GEMPOL",label:"UPTD Puskesmas Gempol"},{key:"RSUD_JATISARI",label:"Rumah Sakit Umum Daerah Jatisari"},{key:"KEL_ADIARSA_BARAT",label:"Kelurahan Adiarsa Barat"},{key:"KEL_NAGASARI",label:"Kelurahan Nagasari"},{key:"PKM_NAGASARI",label:"UPTD Puskesmas Nagasari"},{key:"PKM_LEMAHABANG",label:"UPTD Puskesmas Lemahabang"},{key:"RSUD_KARAWANG",label:"Rumah Sakit Umum Daerah Karawang"},{key:"BAG_TATA_PEMERINTAHAN",label:"Bagian Tata Pemerintahan"},{key:"PKM_ADIARSA",label:"UPTD Puskesmas Adiarsa"},{key:"SATPOLPP",label:"Satuan Polisi Pamong Praja"},{key:"KEC_RENGASDENGKLOK",label:"Kecamatan Rengasdengklok"},{key:"KEC_TEGALWARU",label:"Kecamatan Tegalwaru"},{key:"KEC_JATISARI",label:"Kecamatan Jatisari"},{key:"PKM_RENGASDENGKLOK",label:"UPTD Puskesmas Rengasdengklok"},{key:"BAG_HUKUM",label:"Bagian Hukum"},{key:"PKM_MAJALAYA",label:"UPTD Puskesmas Majalaya"},{key:"KEL_KARAWANG_WETAN",label:"Kelurahan Karawang Wetan"},{key:"PKM_PACING",label:"UPTD Puskesmas Pacing"},{key:"PKM_TEMPURAN",label:"UPTD Puskesmas Tempuran"},{key:"DP3A",label:"Dinas Pemberdayaan Perempuan dan Perlindungan Anak"},{key:"PKM_KARAWANG",label:"UPTD Puskesmas Karawang"},{key:"PKM_JAYAKERTA",label:"UPTD Puskesmas Jayakerta"},{key:"BKPSDM",label:"Badan Kepegawaian dan Pengembangan Sumber Daya Manusia"},{key:"PKM_MEDANGASEM",label:"UPTD Puskesmas Medangasem"},{key:"PKM_CIBUAYA",label:"UPTD Puskesmas Cibuaya"},{key:"PKM_TELUKJAMBE",label:"UPTD Puskesmas Telukjambe"},{key:"KEC_KARAWANG_BARAT",label:"Kecamatan Karawang Barat"},{key:"PKM_PASIRUKEM",label:"UPTD Puskesmas Pasirukem"},{key:"KEC_PAKISJAYA",label:"Kecamatan Pakisjaya"},{key:"BPBD",label:"Badan Penanggulangan Bencana Daerah"},{key:"KEC_KOTABARU",label:"Kecamatan Kotabaru"},{key:"KEL_MEKARJATI",label:"Kelurahan Mekarjati"},{key:"PKM_PLAWAD",label:"UPTD Puskesmas Plawad"},{key:"PKM_CILAMAYA",label:"UPTD Puskesmas Cilamaya"},{key:"PKM_BAYURLOR",label:"UPTD Puskesmas Bayurlor"},{key:"PKM_SUKATANI",label:"UPTD Puskesmas Sukatani"},{key:"KESBANGPOL",label:"Badan Kesatuan Bangsa dan Politik"},{key:"KEC_PURWASARI",label:"Kecamatan Purwasari"},{key:"KEC_BATUJAYA",label:"Kecamatan Batujaya"},{key:"PKM_LEMAH_DUHUR",label:"UPTD Puskesmas Lemah Duhur"},{key:"PKM_JATISARI",label:"UPTD Puskesmas Jatisari"},{key:"DPRKP",label:"Dinas Perumahan Rakyat dan Kawasan Permukiman"},{key:"DISHUB",label:"Dinas Perhubungan"},{key:"KEL_PALUMBONSARI",label:"Kelurahan Palumbonsari"},{key:"PKM_CURUG",label:"UPTD Puskesmas Curug"},{key:"KEL_KARANGPAWITAN",label:"Kelurahan Karangpawitan"},{key:"DISPARPORA",label:"Dinas Pariwisata, Pemuda dan Olahraga"},{key:"DISTAN",label:"Dinas Pertanian, Ketahanan Pangan dan Perikanan"},{key:"DISKOMINFO",label:"Dinas Komunikasi dan Informatika"},{key:"KEC_TELAGASARI",label:"Kecamatan Telagasari"},{key:"DISARPUS",label:"Dinas Arsip dan Perpustakaan"},{key:"KEC_TELUKJAMBE_BARAT",label:"Kecamatan Telukjambe Barat"},{key:"PKM_LOJI",label:"UPTD Puskesmas Loji"},{key:"KEC_JAYAKERTA",label:"Kecamatan Jayakerta"},{key:"DPMD",label:"Dinas Pemberdayaan Masyarakat dan Desa"},{key:"PKM_TIRTAMULYA",label:"UPTD Puskesmas Tirtamulya"},{key:"PKM_PANGKALAN",label:"UPTD Puskesmas Pangkalan"},{key:"DINKES",label:"Dinas Kesehatan"},{key:"BAPENDA",label:"Badan Pendapatan Daerah"},{key:"PKM_KLARI",label:"UPTD Puskesmas Klari"},{key:"DINSOS",label:"Dinas Sosial"},{key:"PKM_KOTABARU",label:"UPTD Puskesmas Kotabaru"},{key:"PKM_PEDES",label:"UPTD Puskesmas Pedes"},{key:"BAPPERIDA",label:"Badan Perencanaan Pembangunan Riset dan Inovasi Daerah"},{key:"DISNAKERTRANS",label:"Dinas Tenaga Kerja dan Transmigrasi"},{key:"DISDIK",label:"Dinas Pendidikan dan Kebudayaan"},{key:"PKM_TANJUNGPURA",label:"UPTD Puskesmas Tanjungpura"},{key:"KEL_ADIARSA_TIMUR",label:"Kelurahan Adiarsa Timur"},{key:"DPUPR",label:"Dinas Pekerjaan Umum dan Penataan Ruang"},{key:"KEL_KARAWANG_KULON",label:"Kelurahan Karawang Kulon"},{key:"BAG_PELAYANAN_DAN_ADMINISTRASI_INTERNAL",label:"Bagian Pelayanan dan Administrasi Internal"},{key:"DPPKB",label:"Dinas Pengendalian Penduduk dan Keluarga Berencana"},{key:"KEL_TANJUNGMEKAR",label:"Kelurahan Tanjungmekar"},{key:"KEC_KLARI",label:"Kecamatan Klari"},{key:"INSPEKTORAT",label:"Inspektorat Daerah"},{key:"PKM_CIAMPEL",label:"UPTD Puskesmas Ciampel"},{key:"DISPERINDAGKOP",label:"Dinas Perindustrian, Perdagangan, Koperasi dan Usaha Kecil Menengah"},{key:"PKM_TELAGASARI",label:"UPTD Puskesmas Telagasari"},{key:"PKM_PAKISJAYA",label:"UPTD Puskesmas Pakisjaya"},{key:"PKM_CICINDE",label:"UPTD Puskesmas Cicinde"},{key:"PKM_WANAKERTA",label:"UPTD Puskesmas Wanakerta"},{key:"KEC_KARAWANG_TIMUR",label:"Kecamatan Karawang Timur"},{key:"KEC_LEMAH_ABANG",label:"Kecamatan Lemah Abang"},{key:"BAG_PEREKONOMIAN_DAN_SUMBER_DAYA_ALAM",label:"Bagian Perekonomian dan Sumber Daya Alam"},{key:"PKM_TIRTAJAYA",label:"UPTD Puskesmas Tirtajaya"},{key:"PKM_TUNGGAKJATI",label:"UPTD Puskesmas Tunggakjati"},{key:"BAG_PERENCANAAN_DAN_KEUANGAN",label:"Bagian Perencanaan dan Keuangan"},{key:"KEC_CIKAMPEK",label:"Kecamatan Cikampek"},{key:"KEC_KUTAWALUYA",label:"Kecamatan Kutawaluya"},{key:"DPMPTSP",label:"Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu"},{key:"KEC_CILAMAYA_KULON",label:"Kecamatan Cilamaya Kulon"},{key:"PKM_CIKAMPEK_UTARA",label:"UPTD Puskesmas Cikampek Utara"},{key:"PKM_KUTAWALUYA",label:"UPTD Puskesmas Kutawaluya"},{key:"KEC_TEMPURAN",label:"Kecamatan Tempuran"},{key:"BAG_PENGADAAN_BARANG_DAN_JASA",label:"Bagian Pengadaan Barang dan Jasa"},{key:"DISDUKCAPIL",label:"Dinas Kependudukan dan Pencatatan Sipil"},{key:"KEC_TELUKJAMBE_TIMUR",label:"Kecamatan Telukjambe Timur"},{key:"KEC_BANYUSARI",label:"Kecamatan Banyusari"},{key:"PKM_ANGGADITA",label:"UPTD Puskesmas Anggadita"},{key:"PKM_SUNGAI_BUNTU",label:"UPTD Puskesmas Sungai Buntu"},{key:"KEC_CILEBAR",label:"Kecamatan Cilebar"},{key:"PKM_RAWAMERTA",label:"UPTD Puskesmas Rawamerta"},{key:"PKM_KERTAMUKTI",label:"UPTD Puskesmas Kertamukti"},{key:"KEC_TIRTAMULYA",label:"Kecamatan Tirtamulya"},{key:"KEC_PANGKALAN",label:"Kecamatan Pangkalan"},{key:"BAG_ORGANISASI",label:"Bagian Organisasi"},{key:"PKM_WADAS",label:"UPTD Puskesmas Wadas"},{key:"BPKAD",label:"Badan Pengelolaan Keuangan dan Aset Daerah"},{key:"KEC_CIBUAYA",label:"Kecamatan Cibuaya"},{key:"PKM_KUTAMUKTI",label:"UPTD Puskesmas Kutamukti"},{key:"KEL_PLAWAD",label:"Kelurahan Plawad"},{key:"KEC_PEDES",label:"Kecamatan Pedes"},{key:"PKM_BATUJAYA",label:"UPTD Puskesmas Batujaya"},{key:"DLH",label:"Dinas Lingkungan Hidup"},{key:"KEC_CILAMAYA_WETAN",label:"Kecamatan Cilamaya Wetan"},{key:"PKM_PURWASARI",label:"UPTD Puskesmas Purwasari"},{key:"SETWAN",label:"Sekretariat DPRD"},{key:"PKM_CIKAMPEK",label:"UPTD Puskesmas Cikampek"}];
+const BIDANG_OPD={
+  "DPUPR"        :["Sekretariat","Bidang Jalan dan Jembatan","Bidang Sumber Daya Air","Bidang Bangunan dan Jasa Konstruksi","Bidang Penataan Ruang"],
+  "DPRKP"        :["Sekretariat","Bidang Perumahan dan Permukiman","Bidang Prasarana Sarana dan Utilitas","Bidang Sanitasi dan Pengelolaan Air Minum","Bidang Pertanahan"],
+  "DISDIK"       :["Sekretariat","Bidang Pendidikan Dasar","Bidang Pendidikan Anak Usia Dini dan Pendidikan Non Formal/Kesetaraan","Bidang Sarana dan Prasarana Pendidikan","Bidang Kebudayaan"],
+  "DINKES"       :["Sekretariat","Bidang Pelayanan Kesehatan","Bidang Kesehatan Masyarakat","Bidang Pencegahan dan Pengendalian Penyakit","Bidang Sumberdaya Kesehatan"],
+  "DLH"          :["Sekretariat","Bidang Tata Lingkungan dan Penataan Peraturan Lingkungan","Bidang Pengendalian Pencemaran dan Keanekaragaman Hayati","Bidang Kebersihan, Pengelolaan Sampah dan Limbah"],
+  "DISHUB"       :["Sekretariat","Bidang Lalu Lintas, Angkutan, Pengembangan dan Keselamatan","Bidang Prasarana"],
+  "DPMD"         :["Sekretariat","Bidang Penataan, Pemberdayaan dan Kerjasama Desa","Bidang Bina Pemerintahan Desa"],
+  "DISTAN"       :["Sekretariat","Bidang Sarana Pertanian","Bidang Prasarana Pertanian","Bidang Peternakan","Bidang Pangan","Bidang Perikanan Tangkap dan Pengawasan Sumberdaya Kelautan dan Perikanan","Bidang Perikanan Budidaya dan Penguatan Daya Saing Produk Perikanan"],
+  "RSUD_JATISARI":["Bagian Tata Usaha","Bidang Pelayanan Kesehatan","Bidang SDM dan Sarana & Prasarana"],
+  "RSUD_KARAWANG":["Bidang Pelayanan Medik","Bidang Penunjang Medik","Bidang Keperawatan","Bagian Sekretariat","Bagian Keuangan","Bagian Perencanaan dan Keuangan"],
+
+  // ── Ditambahkan dari NOMENKLATUR JABATAN 2026 (hanya Sekretariat/Bidang/Bagian setingkat Eselon III) ──
+  "DPRKP"         :["Sekretariat","Bidang Perumahan dan Permukiman","Bidang Pertanahan","Bidang Prasarana Sarana dan Utilitas","Bidang Sanitasi dan Pengelolaan Air Minum"],
+  "BPBD"          :["Sekretariat","Bidang Pencegahan dan Kesiapsiagaan","Bidang Kedaruratan dan Logistik","Bidang Rehabilitasi dan Rekonstruksi","Bidang Pemadamaan Kebakaran dan Penyelamatan"],
+  "DISDUKCAPIL"   :["Sekretariat","Bidang Pelayanan Administrasi Kependudukan","Bidang Pengelolaan Informasi Administrasi Kependudukan dan Pemanfaatan Data"],
+  "KESBANGPOL"    :["Sekretariat","Bidang Ideologi Wawasan Kebangsaan dan Ketahanan Ekonomi, Sosial, Budaya dan Agama","Bidang Politik Dalam Negeri, Kewaspadaan Nasional, Kerjasama Intelijen, Organisasi Kemasyarakatan dan Penanganan Konflik"],
+  "DP3A"          :["Sekretariat","Bidang Peningkatan Kualitas Hidup Perempuan dan Keluarga","Bidang Perlindungan Perempuan dan Anak"],
+  "DISARPUS"      :["Sekretariat","Bidang Arsip","Bidang Perpustakaan"],
+  "DISNAKERTRANS" :["Sekretariat","Bidang Bina Pelatihan dan Produktivitas","Bidang Bina Hubungan Industrial dan Syarat Kerja","Bidang Bina Penempatan dan Perluasan Tenaga Kerja"],
+  "SATPOLPP"      :["Sekretariat","Bidang Penegakan Perundang-undangan Daerah","Bidang Ketertiban Umum dan Ketentraman Masyarakat","Bidang Sumber Daya Aparatur dan Perlindungan Masyarakat"],
+  "DPPKB"         :["Sekretariat","Bidang Pengendalian Penduduk dan Pemberdayaan Keluarga","Bidang Keluarga Berencana"],
+  "DISPARPORA"    :["Sekretariat","Bidang Pariwisata","Bidang Ekonomi Kreatif","Bidang Pemuda dan Olah Raga"],
+  "DINSOS"        :["Sekretariat","Bidang Perlindungan, Pemberdayaan dan Jaminan Sosial","Bidang Rehabilitasi Sosial"],
+  "BPKAD"         :["Sekretariat","Bidang Anggaran","Bidang Perbendaharaan","Bidang Akuntansi","Bidang Aset"],
+  "BKPSDM"        :["Sekretariat","Bidang Pengadaan, Pemberhentian, Evaluasi Kinerja, Kesejahteraan dan Disiplin","Bidang Pengembangan Karir dan Kepangkatan","Bidang Pengembangan Sumber Daya Manusia"],
+  "BAPPERIDA"     :["Sekretariat","Bidang Perencanaan, Pengendalian dan Evaluasi Pembangunan Daerah","Bidang Pemerintahan dan Pembangunan Manusia","Bidang Perekonomian dan Sumber Daya Alam","Bidang Infrastruktur dan Kewilayahan","Bidang Riset dan Inovasi"],
+  "BAPENDA"       :["Sekretariat","Bidang Pembinaan dan Pengawasan","Bidang Pelayanan Pajak Daerah","Bidang Perencanaan dan Sistem Informasi"],
+  "DISKOMINFO"    :["Sekretariat","Bidang Informasi, Komunikasi Publik dan Statistik","Bidang Aplikasi Informatika dan Persandian"],
+  "DISPERINDAGKOP":["Sekretariat","Bidang Perindustrian","Bidang Perdagangan","Bidang Koperasi","Bidang Pemberdayaan dan Pengembangan Usaha Mikro, Kecil dan Menengah"],
+  "RSUD_RENGASDENGKLOK":["Bidang Pelayanan Medik","Bidang Keperawatan","Bidang Penunjang Medik","Bagian Sekretariat","Bagian Keuangan","Bagian Perencanaan dan Anggaran"],
+};
+
+/* OPD tanpa daftar bidang (Bagian, Kecamatan, Kelurahan, Puskesmas) -> field Bidang opsional */
+function punyaBidang(opd){ return (BIDANG_OPD[opd]||[]).length>0; }
+</script>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Memuat data...</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- Modal Login -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <button class="btn-close-login" onclick="document.getElementById('loginOverlay').classList.remove('show')" title="Tutup">✕</button>
+    <div class="login-logo">DIBANGUNIN</div>
+    <div class="login-tagline">Digitalisasi Pengendalian Pembangunan Secara Intensif<br>Kab. Karawang — TA 2026</div>
+    <div class="login-opd-name" id="loginOPDName">— Pilih OPD —</div>
+    <div class="login-error" id="loginError"></div>
+    <div class="login-field">
+      <label>Password</label>
+      <div style="position:relative;display:flex;align-items:center">
+        <input type="password" id="loginPassword" placeholder="Masukkan password"
+          style="padding-right:38px;width:100%"
+          onkeydown="if(event.key==='Enter') doLogin()">
+        <button type="button" onclick="toggleShowPassword()"
+          style="position:absolute;right:10px;background:none;border:none;cursor:pointer;font-size:15px;color:var(--text-muted);padding:0;line-height:1"
+          id="btnShowPass" title="Tampilkan/sembunyikan password">👁‍🗨</button>
+      </div>
+    </div>
+    <div class="login-admin-toggle">
+      <input type="checkbox" id="loginAsAdmin" onchange="toggleAdminLogin()">
+      <label for="loginAsAdmin">Login sebagai Admin (akses semua OPD)</label>
+    </div>
+    <button class="btn-login" id="btnLogin" onclick="doLogin()">Masuk →</button>
+    <div class="login-hint">Hubungi admin jika lupa password</div>
+  </div>
+</div>
+
+<!-- Modal Update RUP -->
+<div class="modal-overlay" id="modalUpdateRUP">
+  <div class="modal">
+    <div class="modal-title">⚠️ Perbarui Nomor RUP</div>
+    <div class="modal-sub" id="modalSub">—</div>
+
+    <div class="modal-field">
+      <label>Nomor RUP Baru</label>
+      <input type="text" id="inputRUPBaru" placeholder="Contoh: 62327991. Pastikan Nomor RUP sesuai dengan paketnya"
+        onkeydown="if(event.key==='Enter')simpanUpdateRUP(false)">
+    </div>
+    <div class="modal-note">
+      Data isian OPD (Sub Kegiatan, Nilai Kontrak, Realisasi, dll) akan tetap utuh. Hanya nomor RUP yang diperbarui di sistem.
+    </div>
+
+    <!-- Panel perbandingan — muncul kalau backend mendeteksi paket lama & baru berbeda -->
+    <div class="modal-note" id="konfirmasiBeda" style="display:none;border-left:3px solid #8B1A1A;background:#FFF0F0;color:#8B1A1A">
+      <strong>⚠️ Paket baru tampak berbeda dari paket lama.</strong>
+      <div style="margin-top:8px;font-size:11.5px;line-height:1.6">
+        <div><strong>Paket lama:</strong> <span id="kbNamaLama">—</span> · Pagu Rp <span id="kbPaguLama">—</span></div>
+        <div style="margin-top:4px"><strong>Paket baru (SIRUP):</strong> <span id="kbNamaBaru">—</span> · Pagu Rp <span id="kbPaguBaru">—</span></div>
+      </div>
+      <div style="margin-top:8px">Melanjutkan akan memindahkan seluruh data isian (progress, kontrak, dll) ke paket yang berbeda ini. Yakin ini paket yang sama, hanya nomor RUP-nya berubah?</div>
+    </div>
+
+    <div class="modal-actions" id="modalActionsNormal" style="justify-content:space-between">
+      <button class="btn-modal-delete" id="btnBukaHapus" onclick="toggleHapusPaket()">🗑️ Hapus Paket Ini</button>
+      <div style="display:flex;gap:10px">
+        <button class="btn-modal-cancel" onclick="tutupModal()">Batal</button>
+        <button class="btn-modal-save" id="btnSimpanRUP" onclick="simpanUpdateRUP(false)">Simpan RUP Baru</button>
+      </div>
+    </div>
+    <div class="modal-actions" id="modalActionsKonfirmasi" style="display:none">
+      <button class="btn-modal-cancel" onclick="batalKonfirmasiBeda()">Batal, saya akan hapus & isi ulang</button>
+      <button class="btn-modal-save" onclick="simpanUpdateRUP(true)">Ya, ini paket yang sama</button>
+    </div>
+
+    <div id="hapusPaketSection" style="display:none;margin-top:14px">
+      <div class="modal-note" style="border-left:3px solid #8B1A1A;background:#FFF0F0;color:#8B1A1A">
+        ⚠️ Tindakan ini menghapus paket secara permanen dari sistem dan tidak bisa dibatalkan. Masukkan password untuk konfirmasi.
+      </div>
+      <div class="modal-field" style="margin-top:10px">
+        <label>Password Konfirmasi</label>
+        <div style="position:relative;display:flex;align-items:center">
+          <input type="password" id="inputPasswordHapus" placeholder="Masukkan password"
+            style="padding-right:38px;width:100%"
+            onkeydown="if(event.key==='Enter')konfirmasiHapusPaket()">
+          <button type="button" onclick="toggleShowPasswordFor('inputPasswordHapus','btnShowPassHapus')"
+            style="position:absolute;right:10px;background:none;border:none;cursor:pointer;font-size:15px;color:var(--text-muted);padding:0;line-height:1"
+            id="btnShowPassHapus" title="Tampilkan/sembunyikan password">👁‍🗨</button>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="toggleHapusPaket()">Batal</button>
+        <button class="btn-modal-delete" id="btnKonfirmasiHapus" onclick="konfirmasiHapusPaket()">Konfirmasi Hapus</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Update Kode Paket (Pengadaan Langsung) -->
+<div class="modal-overlay" id="modalUpdateKP">
+  <div class="modal">
+    <div class="modal-title">⚠️ Perbarui Kode Paket</div>
+    <div class="modal-sub" id="modalSubKP">—</div>
+
+    <div class="modal-field">
+      <label>Kode Paket Baru</label>
+      <input type="text" id="inputKPBaru" placeholder="Contoh: 11050747000. Pastikan Kode Paket sesuai dengan paketnya"
+        onkeydown="if(event.key==='Enter')simpanUpdateKP(false)">
+    </div>
+    <div class="modal-note">
+      Data isian OPD (Bidang, tanggal, Total Pagu, dll) akan tetap utuh. Hanya Kode Paket yang diperbarui di sistem.
+    </div>
+
+    <div class="modal-note" id="konfirmasiBedaKP" style="display:none;border-left:3px solid #8B1A1A;background:#FFF0F0;color:#8B1A1A">
+      <strong>⚠️ Paket baru tampak berbeda dari paket lama.</strong>
+      <div style="margin-top:8px;font-size:11.5px;line-height:1.6">
+        <div><strong>Paket lama:</strong> <span id="kpNamaLama">—</span> · Nilai Rp <span id="kpNilaiLama">—</span></div>
+        <div style="margin-top:4px"><strong>Paket baru (Realisasi):</strong> <span id="kpNamaBaru">—</span> · Nilai Rp <span id="kpNilaiBaru">—</span></div>
+      </div>
+      <div style="margin-top:8px">Melanjutkan akan memindahkan seluruh data isian ke paket yang berbeda ini. Yakin ini paket yang sama, hanya Kode Paket-nya berubah?</div>
+    </div>
+
+    <div class="modal-actions" id="modalActionsNormalKP" style="justify-content:space-between">
+      <button class="btn-modal-delete" id="btnBukaHapusKP" onclick="toggleHapusPaketKP()">🗑️ Hapus Paket Ini</button>
+      <div style="display:flex;gap:10px">
+        <button class="btn-modal-cancel" onclick="tutupModalKP()">Batal</button>
+        <button class="btn-modal-save" id="btnSimpanKP" onclick="simpanUpdateKP(false)">Simpan Kode Paket Baru</button>
+      </div>
+    </div>
+    <div class="modal-actions" id="modalActionsKonfirmasiKP" style="display:none">
+      <button class="btn-modal-cancel" onclick="batalKonfirmasiBedaKP()">Batal, saya akan hapus & isi ulang</button>
+      <button class="btn-modal-save" id="btnLanjutKP" onclick="simpanUpdateKP(true)">Ya, ini paket yang sama</button>
+    </div>
+
+    <div id="hapusPaketSectionKP" style="display:none;margin-top:14px">
+      <div class="modal-note" style="border-left:3px solid #8B1A1A;background:#FFF0F0;color:#8B1A1A">
+        ⚠️ Tindakan ini menghapus data isian paket ini secara permanen dari sistem dan tidak bisa dibatalkan. Masukkan password untuk konfirmasi.
+      </div>
+      <div class="modal-field" style="margin-top:10px">
+        <label>Password Konfirmasi</label>
+        <div style="position:relative;display:flex;align-items:center">
+          <input type="password" id="inputPasswordHapusKP" placeholder="Masukkan password"
+            style="padding-right:38px;width:100%"
+            onkeydown="if(event.key==='Enter')konfirmasiHapusPaketKP()">
+          <button type="button" onclick="toggleShowPasswordFor('inputPasswordHapusKP','btnShowPassHapusKP')"
+            style="position:absolute;right:10px;background:none;border:none;cursor:pointer;font-size:15px;color:var(--text-muted);padding:0;line-height:1"
+            id="btnShowPassHapusKP" title="Tampilkan/sembunyikan password">👁‍🗨</button>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="toggleHapusPaketKP()">Batal</button>
+        <button class="btn-modal-delete" id="btnKonfirmasiHapusKP" onclick="konfirmasiHapusPaketKP()">Konfirmasi Hapus</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Input Detail Paket -->
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-modal" id="detailModal">
+    <div class="detail-header">
+      <div class="detail-header-left">
+        <div class="detail-rup" id="detailRUP">—</div>
+        <div class="detail-nama" id="detailNama">—</div>
+        <div class="detail-meta">
+          <span class="detail-chip" id="detailMetode">—</span>
+          <span class="detail-chip" id="detailSumber">—</span>
+          <span class="detail-chip" id="detailPagu">—</span>
+        </div>
+      </div>
+      <button class="btn-close-detail" onclick="tutupDetailModal()">✕</button>
+    </div>
+    <div class="detail-body" id="detailBody">
+      <!-- diisi dinamis oleh JS -->
+    </div>
+
+    <div id="hapusInputPKSection" style="display:none;padding:0 24px 16px;background:#fff">
+      <div class="modal-note" style="border-left:3px solid #8B1A1A;background:#FFF0F0;color:#8B1A1A">
+        ⚠️ Ini menghapus semua data yang sudah diisi OPD untuk paket ini (bidang, tanggal, progress, dll). Paket itu sendiri TIDAK dihapus dan akan tetap muncul dari SIRUP. Masukkan password untuk konfirmasi.
+      </div>
+      <div class="modal-field" style="margin-top:10px">
+        <label>Password Konfirmasi</label>
+        <div style="position:relative;display:flex;align-items:center">
+          <input type="password" id="inputPasswordHapusInputPK" placeholder="Masukkan password"
+            style="padding-right:38px;width:100%"
+            onkeydown="if(event.key==='Enter')konfirmasiHapusInputPK()">
+          <button type="button" onclick="toggleShowPasswordFor('inputPasswordHapusInputPK','btnShowPassPK')"
+            style="position:absolute;right:10px;background:none;border:none;cursor:pointer;font-size:15px;color:var(--text-muted);padding:0;line-height:1"
+            id="btnShowPassPK" title="Tampilkan/sembunyikan password">👁‍🗨</button>
+        </div>
+      </div>
+      <div class="modal-actions" style="margin-top:12px">
+        <button class="btn-modal-cancel" onclick="toggleHapusInputPK()">Batal</button>
+        <button class="btn-modal-delete" id="btnKonfirmasiHapusInputPK" onclick="konfirmasiHapusInputPK()">Konfirmasi Hapus Data</button>
+      </div>
+    </div>
+
+    <div class="detail-footer">
+      <div class="detail-footer-left">
+        <strong id="detailFooterLabel">—</strong>
+        <span id="detailFooterUpdated"></span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn-modal-delete" id="btnHapusInputPKFooter" onclick="toggleHapusInputPK()">🗑️ Hapus Data Input</button>
+        <button class="btn-detail-cancel" onclick="tutupDetailModal()">Batal</button>
+        <button class="btn-detail-save" id="btnDetailSave" onclick="simpanDetail()">Simpan Paket Ini →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Input Detail Paket PL -->
+<div class="detail-overlay" id="plDetailOverlay">
+  <div class="detail-modal" id="plDetailModal">
+    <div class="detail-header">
+      <div class="detail-header-left">
+        <div class="detail-rup" id="plKodePaket">—</div>
+        <div class="detail-nama" id="plNama">—</div>
+        <div class="detail-meta">
+          <span class="detail-chip" id="plJenis">—</span>
+          <span class="detail-chip" id="plSumberDana">—</span>
+          <span class="detail-chip" id="plLinkStatus">—</span>
+        </div>
+      </div>
+      <button class="btn-close-detail" onclick="tutupModalPL()">✕</button>
+    </div>
+    <div class="detail-body" id="plDetailBody"></div>
+
+    <div id="hapusInputPLSection" style="display:none;padding:0 24px 16px;background:#fff">
+      <div class="modal-note" style="border-left:3px solid #8B1A1A;background:#FFF0F0;color:#8B1A1A">
+        ⚠️ Ini menghapus semua data yang sudah diisi OPD untuk paket ini. Paket itu sendiri TIDAK dihapus dan akan tetap muncul dari Data Realisasi. Masukkan password untuk konfirmasi.
+      </div>
+      <div class="modal-field" style="margin-top:10px">
+        <label>Password Konfirmasi</label>
+        <div style="position:relative;display:flex;align-items:center">
+          <input type="password" id="inputPasswordHapusInputPL" placeholder="Masukkan password"
+            style="padding-right:38px;width:100%"
+            onkeydown="if(event.key==='Enter')konfirmasiHapusInputPL()">
+          <button type="button" onclick="toggleShowPasswordFor('inputPasswordHapusInputPL','btnShowPassPL')"
+            style="position:absolute;right:10px;background:none;border:none;cursor:pointer;font-size:15px;color:var(--text-muted);padding:0;line-height:1"
+            id="btnShowPassPL" title="Tampilkan/sembunyikan password">👁‍🗨</button>
+        </div>
+      </div>
+      <div class="modal-actions" style="margin-top:12px">
+        <button class="btn-modal-cancel" onclick="toggleHapusInputPL()">Batal</button>
+        <button class="btn-modal-delete" id="btnKonfirmasiHapusInputPL" onclick="konfirmasiHapusInputPL()">Konfirmasi Hapus Data</button>
+      </div>
+    </div>
+
+    <div class="detail-footer">
+      <div class="detail-footer-left">
+        <strong id="plFooterLabel">—</strong>
+        <span id="plFooterUpdated"></span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn-modal-delete" id="btnHapusInputPLFooter" onclick="toggleHapusInputPL()">🗑️ Hapus Data Input</button>
+        <button class="btn-detail-cancel" onclick="tutupModalPL()">Batal</button>
+        <button class="btn-detail-save" id="btnPLSave" onclick="simpanPL()">Simpan Paket Ini →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="logo">DIBANGUNIN</div>
+    <div class="tagline">Digitalisasi Pengendalian Pembangunan Secara Intensif</div>
+  </div>
+  <div class="header-meta">
+    <div class="header-chip active">Kab. Karawang</div>
+    <div class="header-chip">TA 2026</div>
+    <div class="header-chip" id="headerOPD" style="display:none"></div>
+  </div>
+  <div class="header-right">
+    <div class="last-update" id="headerUpdate"></div>
+  </div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" id="tabInput" onclick="switchTab('input')">📋 Input Data</button>
+  <button class="tab-btn" id="tabDashboard" onclick="switchTab('dashboard')">📊 Dashboard</button>
+</div>
+
+<div class="container">
+  <div id="viewInput">
+  <!-- Top Bar: OPD + Search -->
+  <div class="panel">
+    <div class="panel-body">
+      <div class="top-bar">
+        <input type="text" id="opdInput" list="opdDatalist" placeholder="Ketik nama OPD / satuan kerja..." autocomplete="off"
+          onkeydown="if(event.key==='Enter')loadData()">
+        <datalist id="opdDatalist"></datalist>
+        <input type="hidden" id="opdSelect" value="">
+        <button class="btn-primary" onclick="loadData()">Muat Data →</button>
+        <div class="divider-v"></div>
+        <div class="search-bar">
+          <input type="text" id="searchRUP" placeholder="Cari No. RUP atau nama..."
+            onkeydown="if(event.key==='Enter')searchByRUP()">
+          <button class="btn-search" onclick="searchByRUP()">🔍 Cari</button>
+          <span class="search-result-info" id="searchInfo" style="display:none"></span>
+          <button class="btn-reset" id="btnReset" style="display:none" onclick="resetSearch()">× Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sectionForms" style="display:none">
+    <div class="info-bar" id="infoBar">
+      <div class="dot"></div>
+      <div id="infoText">—</div>
+    </div>
+
+    <div class="subtab-nav">
+      <button class="subtab-btn active" id="subtabPL" onclick="switchSubTab('pl')">📦 Pengadaan Langsung</button>
+      <button class="subtab-btn" id="subtabPK" onclick="switchSubTab('pk')">🏗️ Monitoring PK</button>
+    </div>
+
+    <div class="panel" id="panelPK" style="display:none">
+      <!-- Tabel Tunggal -->
+      <div class="tbl-title">
+        Paket Pekerjaan Konstruksi
+        <span>Sumber data SiRUP 2026</span>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl" id="mainTable">
+          <thead>
+            <tr>
+              <th rowspan="3">No</th>
+              <th rowspan="3" style="min-width:88px">RUP</th>
+              <th rowspan="3" style="min-width:200px">Nama Pekerjaan</th>
+              <th rowspan="3" style="min-width:200px">Bidang</th>
+              <th colspan="2">Lokasi</th>
+              <th rowspan="3" style="min-width:90px">Sumber Dana</th>
+              <th rowspan="3" style="min-width:120px">Pagu (Rp)</th>
+              <th rowspan="3" style="min-width:120px">Metode Pemilihan</th>
+              <th colspan="2">Rencana Waktu Pelaksanaan</th>
+              <th rowspan="3" style="min-width:140px">Nama Penyedia</th>
+              <th rowspan="3" style="min-width:125px">Nilai Kontrak</th>
+              <th rowspan="3" style="min-width:108px">Tanggal Kontrak</th>
+              <th rowspan="3" style="min-width:105px">Waktu Pelaksanaan<br><span style="font-size:8.5px;font-weight:400;opacity:.75">(Hari Kalender)</span></th>
+              <th colspan="2">Pelaksanaan Pekerjaan</th>
+              <th colspan="3">Realisasi</th>
+              <th rowspan="3" style="min-width:108px">Penyerahan PHO</th>
+              <th rowspan="3" style="min-width:180px">Keterangan</th>
+              <th rowspan="3" style="min-width:90px">Update Terakhir</th>
+            </tr>
+            <tr>
+              <th rowspan="2" style="min-width:120px">Desa / Kelurahan</th>
+              <th rowspan="2" style="min-width:110px">Kecamatan</th>
+              <th rowspan="2" style="min-width:70px">Mulai (TW)</th>
+              <th rowspan="2" style="min-width:70px">Selesai (TW)</th>
+              <th rowspan="2" style="min-width:108px">Mulai</th>
+              <th rowspan="2" style="min-width:108px">Selesai</th>
+              <th rowspan="2" style="min-width:72px">% Keuangan</th>
+              <th rowspan="2" style="min-width:72px">% Fisik</th>
+              <th rowspan="2" style="min-width:180px">Output</th>
+            </tr>
+            <tr><!-- spacer row for rowspan --></tr>
+          </thead>
+          <tbody id="tbodyMain"></tbody>
+        </table>
+      </div>
+      <!-- Legend -->
+      <div class="legend">
+        <span style="font-size:10.5px;color:var(--text-muted);font-weight:600;margin-right:4px">Keterangan baris:</span>
+        <div class="legend-item"><div class="legend-dot" style="background:#FFF7E0;border:1px solid #FFDF7E"></div> Pengadaan Langsung (ada kolom jenis transaksi)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#EBF4FF;border:1px solid #B3D1F5"></div> Tender</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#F0EDE6;border:1px solid #D4CFC5"></div> Metode lainnya</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#FFF0F0;border:1px solid #F5AAAA"></div> RUP tidak ditemukan di SIRUP — perlu diperbarui</div>
+      </div>
+      <!-- Pagination Bar -->
+      <div class="paging-bar" id="pagingBar" style="display:none">
+        <div class="paging-size">
+          Tampilkan
+          <select id="pageSizeSelect" onchange="ubahPageSize(this.value)">
+            <option value="25">25</option>
+            <option value="50" selected>50</option>
+            <option value="100">100</option>
+          </select>
+          data
+        </div>
+        <div class="paging-info" id="pagingInfo">—</div>
+        <div class="paging-nav" id="pagingNav"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panelPL">
+      <div class="info-bar warn" id="infoBarPL" style="display:none;margin:14px 18px 0">
+        <div class="dot" style="background:#8B1A1A"></div>
+        <div id="infoTextPL">—</div>
+      </div>
+      <div class="tbl-title">
+        Paket Pengadaan Langsung
+        <span>Sumber data DATA REALISASI 2026 — Metode: Pengadaan Langsung</span>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl" id="tablePL">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Kode Paket</th>
+              <th style="min-width:200px">Nama Paket</th>
+              <th style="min-width:150px">Bidang</th>
+              <th>Jenis</th>
+              <th>Sumber Dana</th>
+              <th style="min-width:140px">Nama Penyedia</th>
+              <th style="min-width:140px">Alamat Penyedia</th>
+              <th>Nilai Realisasi (Rp)</th>
+              <th>Total Pagu (Rp)</th>
+              <th>Efisiensi (Rp)</th>
+              <th>Tgl Mulai</th>
+              <th>Tgl Selesai</th>
+              <th>Waktu (HK)</th>
+              <th>Program</th>
+              <th>Pengusul</th>
+              <th style="min-width:160px">Keterangan</th>
+              <th>Update Terakhir</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyPL"></tbody>
+        </table>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#D6EDE0;border:1px solid #A8D5B8"></div> Tertaut ke Monitoring PK (data ikut sinkron)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#F0EDE6;border:1px solid #D4CFC5"></div> Standalone (barang/jasa, disimpan terpisah)</div>
+      </div>
+      <div class="paging-bar" id="pagingBarPL" style="display:none">
+        <div class="paging-size">
+          Tampilkan
+          <select id="pageSizeSelectPL" onchange="ubahPageSizePL(this.value)">
+            <option value="25">25</option>
+            <option value="50" selected>50</option>
+            <option value="100">100</option>
+          </select>
+          data
+        </div>
+        <div class="paging-info" id="pagingInfoPL">—</div>
+        <div class="paging-nav" id="pagingNavPL"></div>
+      </div>
+    </div>
+
+  </div>
+  </div> <!-- /viewInput -->
+
+  <!-- ════════ TAB: DASHBOARD ════════ -->
+  <div id="viewDashboard" style="display:none">
+    <div class="dash-refresh-info" id="dashRefreshInfo">—</div>
+
+    <div class="dash-summary" id="dashSummary"></div>
+
+    <div class="panel">
+      <div class="panel-body" style="padding-bottom:8px">
+        <h3 style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">Rekap per OPD</h3>
+        <p style="font-size:11px;color:var(--text-muted)">Klik kartu untuk melihat detail rekap</p>
+      </div>
+      <div class="panel-body" style="padding-top:6px">
+        <div class="dash-opd-grid" id="dashOpdGrid"></div>
+      </div>
+    </div>
+  </div> <!-- /viewDashboard -->
+</div>
+
+<script>
+let selectedOPD="";
+let allData=[];
+let paketData=[];
+let allDataPL    = [];
+let paketDataPL  = [];
+let rawRealisasi = [];
+let rawSheetsPL  = [];
+let currentSubTab = "pl";
+let isSearchMode=false;
+
+// ── Auth state ──
+let authToken  = "";
+let authRole   = ""; // "opd" atau "admin"
+let isAdmin    = false;
+
+// ── Pagination state ──
+let currentPage = 1;
+let pageSize    = 50;
+let currentPagePL = 1;
+let pageSizePL    = 50;
+
+// ── Dashboard state ──
+let dashboardData   = null;
+let dashboardLoaded = false;
+
+(function init(){
+  const dl=document.getElementById("opdDatalist");
+  OPD_LIST.forEach(o=>{
+    const opt=document.createElement("option");
+    opt.value=o.label;
+    dl.appendChild(opt);
+  });
+  // Teks yang diketik/dipilih -> cocokkan ke label (atau kode), simpan key di #opdSelect (hidden)
+  const norm=t=>String(t||"").trim().replace(/\s+/g," ").toLowerCase();
+  document.getElementById("opdInput").addEventListener("input",function(){
+    const q=norm(this.value);
+    const hit=q && OPD_LIST.find(o=>norm(o.label)===q || norm(o.key)===q);
+    document.getElementById("opdSelect").value=hit?hit.key:"";
+    this.style.borderColor = (q && !hit) ? "var(--red)" : "";
+  });
+})();
+
+/* ── Auth & Login ── */
+function toggleAdminLogin(){
+  const isAdminCheck = document.getElementById("loginAsAdmin").checked;
+  const opdKey = document.getElementById("opdSelect").value;
+  if(isAdminCheck){
+    document.getElementById("loginOPDName").textContent="Login Admin — akses semua OPD";
+  } else {
+    const lbl = OPD_LIST.find(o=>o.key===opdKey)?.label||"— Pilih OPD —";
+    document.getElementById("loginOPDName").textContent=lbl;
+  }
+}
+
+function bukaLoginModal(){
+  const opdKey = document.getElementById("opdSelect").value;
+  const isAdminMode = document.getElementById("loginAsAdmin").checked;
+  if(!opdKey && !isAdminMode){toast("Pilih OPD dulu","error");return;}
+  const lbl = OPD_LIST.find(o=>o.key===opdKey)?.label||"— Pilih OPD —";
+  document.getElementById("loginOPDName").textContent=isAdminMode?"Login Admin — akses semua OPD":lbl;
+  document.getElementById("loginPassword").value="";
+  document.getElementById("loginError").style.display="none";
+  document.getElementById("loginAsAdmin").checked=false;
+  document.getElementById("loginOverlay").classList.add("show");
+  setTimeout(()=>document.getElementById("loginPassword").focus(),100);
+}
+
+function toggleShowPassword(){
+  const inp = document.getElementById("loginPassword");
+  const btn = document.getElementById("btnShowPass");
+  if(inp.type==="password"){
+    inp.type="text";
+    btn.textContent="👁";
+  } else {
+    inp.type="password";
+    btn.textContent="👁‍🗨";
+  }
+}
+
+function toggleShowPasswordFor(inputId, btnId){
+  const inp = document.getElementById(inputId);
+  const btn = document.getElementById(btnId);
+  if(inp.type==="password"){
+    inp.type="text";
+    btn.textContent="👁";
+  } else {
+    inp.type="password";
+    btn.textContent="👁‍🗨";
+  }
+}
+
+async function doLogin(){
+  const password    = document.getElementById("loginPassword").value.trim();
+  const isAdminMode = document.getElementById("loginAsAdmin").checked;
+  const opdKey      = document.getElementById("opdSelect").value;
+  const errEl       = document.getElementById("loginError");
+  if(!password){errEl.textContent="Password wajib diisi";errEl.style.display="block";return;}
+  document.getElementById("btnLogin").disabled=true;
+  document.getElementById("btnLogin").textContent="Memverifikasi...";
+  errEl.style.display="none";
+  try{
+    const url = APPS_SCRIPT_URL
+      +"?action=verifyAuth"
+      +"&opd="+encodeURIComponent(isAdminMode?"ALL":opdKey)
+      +"&password="+encodeURIComponent(password)
+      +"&role="+(isAdminMode?"admin":"opd");
+    const res  = await fetch(url);
+    const data = await res.json();
+    if(data.error) throw new Error(data.error);
+    authToken = data.token;
+    authRole  = data.role;
+    isAdmin   = data.role==="admin";
+    document.getElementById("loginOverlay").classList.remove("show");
+    if(isAdmin){
+      toast("Login admin berhasil — akses semua OPD","success");
+      if(opdKey) await _loadDataWithToken(opdKey);
+    } else {
+      selectedOPD = data.opd;
+      toast("Login berhasil","success");
+      await _loadDataWithToken(data.opd);
+    }
+  }catch(e){
+    errEl.textContent=e.message;
+    errEl.style.display="block";
+  }finally{
+    document.getElementById("btnLogin").disabled=false;
+    document.getElementById("btnLogin").textContent="Masuk →";
+  }
+}
+
+/* ── Load & Search ── */
+async function loadData(){
+  const opdKey = document.getElementById("opdSelect").value;
+  if(!opdKey){toast("Pilih OPD dulu","error");return;}
+  if(authToken && (isAdmin || selectedOPD===opdKey)){
+    await _loadDataWithToken(opdKey);
+  } else {
+    selectedOPD = opdKey;
+    bukaLoginModal();
+  }
+}
+
+async function _loadDataWithToken(opdKey){
+  selectedOPD = opdKey;
+  isSearchMode=false;
+  document.getElementById("searchRUP").value="";
+  document.getElementById("searchInfo").style.display="none";
+  document.getElementById("btnReset").style.display="none";
+  paketData=[]; allData=[];
+  const tb=document.getElementById("tbodyMain");
+  while(tb.firstChild) tb.removeChild(tb.firstChild);
+  setLoading(true,"Mengambil data SIRUP & Sheets...");
+  try{
+    const res  = await fetch(APPS_SCRIPT_URL
+      +"?action=getAllData"
+      +"&opd="+encodeURIComponent(opdKey)
+      +"&token="+encodeURIComponent(authToken));
+    const json = await res.json();
+    if(json.error){
+      if(json.error.includes("Sesi habis")||json.error.includes("login ulang")){
+        authToken=""; authRole=""; isAdmin=false;
+        bukaLoginModal(); return;
+      }
+      throw new Error(json.error);
+    }
+    paketData = mergeData(json.sirup||[], json.sheets||[], json.realisasi||[]);
+    allData   = paketData;
+
+    rawRealisasi = json.realisasi||[];
+    rawSheetsPL  = json.sheets_pl||[];
+    paketDataPL  = mergeDataPL(rawRealisasi, rawSheetsPL, allData, opdKey);
+    allDataPL    = paketDataPL;
+
+    renderAll(); renderAllPL(); showForms(false); cekOrphan();
+    switchSubTab("pl");
+    toast("Data berhasil dimuat","success");
+  }catch(e){
+    setLoading(false);
+    document.getElementById("sectionForms").style.display="block";
+    const infoBar=document.getElementById("infoBar");
+    infoBar.className="info-bar warn";
+    document.getElementById("infoText").innerHTML=
+      `⚠️ Gagal memuat data — <strong>${e.message}</strong><br>`+
+      `<span style="font-size:11px;opacity:.8">Periksa koneksi dan pastikan Apps Script sudah di-deploy.</span>`;
+    document.getElementById("tbodyMain").innerHTML=
+      `<tr><td colspan="25"><div class="empty"><div class="icon">⚠️</div>`+
+      `<p style="color:var(--red);font-weight:500">Gagal memuat data</p>`+
+      `<p style="font-size:12px;margin-top:6px;color:var(--text-muted)">${e.message}</p></div></td></tr>`;
+    toast("Gagal: "+e.message,"error"); return;
+  }finally{setLoading(false);}
+}
+
+/* click fire setelah mouseup walau user lagi drag-select teks nama paket — skip buka modal kalau ada seleksi aktif */
+function seleksiTeksAktif(){
+  const sel = window.getSelection();
+  return !!(sel && sel.toString().length>0);
+}
+
+/* Normalisasi teks sebelum dibandingkan di search — biar gak gagal gara-gara
+   karakter tak kasat mata (non-breaking space, en-dash/em-dash, spasi ganda, dst)
+   yang kebawa saat copy-paste dari SIRUP/Excel */
+function normalizeTeks(s){
+  return String(s||"")
+    .normalize("NFKC")
+    .replace(/[\u2010-\u2015\u2212]/g,"-")  // samakan semua jenis dash jadi "-"
+    .replace(/\s+/g," ")                     // rapikan spasi ganda / non-breaking space
+    .trim()
+    .toLowerCase();
+}
+
+async function searchByRUP(){
+  const q=document.getElementById("searchRUP").value.trim();
+  if(!q){toast("Masukkan kata kunci pencarian","error");return;}
+  const ql=normalizeTeks(q);
+  isSearchMode=true;
+
+  // ── Kalau allData sudah ada di memori, cari langsung tanpa fetch ──
+  // Cari di kedua sumber: tab PK (allData) dan tab PL (allDataPL, kode_rup-nya sudah ada di kolom B)
+  if(allData.length){
+    const hasilPK = allData.filter(p=>
+      normalizeTeks(p.kode_rup).includes(ql)||
+      normalizeTeks(p.nama).includes(ql)
+    );
+    const hasilPL = (allDataPL||[]).filter(p=>
+      normalizeTeks(p.kode_rup).includes(ql)||
+      normalizeTeks(p.kode_paket).includes(ql)||
+      normalizeTeks(p.nama).includes(ql)
+    );
+    if(!hasilPK.length && !hasilPL.length){toast("Data tidak ditemukan","error");return;}
+
+    paketData   = hasilPK;
+    paketDataPL = hasilPL;
+    document.getElementById("searchInfo").textContent=
+      hasilPK.length+" paket PK, "+hasilPL.length+" paket PL ditemukan";
+    document.getElementById("searchInfo").style.display="inline";
+    document.getElementById("btnReset").style.display="inline";
+    renderAll(); renderAllPL(); showForms(true,q);
+    toast("Ditemukan: "+(hasilPK.length+hasilPL.length)+" paket","success");
+    return;
+  }
+
+  // ── Kalau belum ada data (belum load OPD), fetch ke Apps Script ──
+  setLoading(true,"Mencari data...");
+  try{
+    const res=await fetch(APPS_SCRIPT_URL+"?action=searchRUP&q="+encodeURIComponent(q));
+    const data=await res.json();
+    if(data.error)throw new Error(data.error);
+    paketData=data;
+    if(!paketData.length){toast("Data tidak ditemukan","error");return;}
+    document.getElementById("searchInfo").textContent=paketData.length+" paket ditemukan";
+    document.getElementById("searchInfo").style.display="inline";
+    document.getElementById("btnReset").style.display="inline";
+    renderAll(); showForms(true,q);
+    toast("Ditemukan: "+paketData.length+" paket","success");
+  }catch(e){
+    toast("Gagal mencari data: "+e.message,"error");
+  }finally{setLoading(false);}
+}
+
+function resetSearch(){
+  isSearchMode=false;
+  document.getElementById("searchRUP").value="";
+  document.getElementById("searchInfo").style.display="none";
+  document.getElementById("btnReset").style.display="none";
+
+  // Kalau allData masih ada, kembalikan tampilan OPD yang sebelumnya di-load
+  if(allData.length){
+    paketData=[...allData];
+    paketDataPL=[...(allDataPL||[])];
+    renderAll(); renderAllPL();
+    showForms(false);
+    cekOrphan();
+  } else {
+    // Belum ada data — sembunyikan section
+    document.getElementById("sectionForms").style.display="none";
+    document.getElementById("opdSelect").value="";
+    document.getElementById("opdInput").value="";
+    selectedOPD="";
+    document.getElementById("headerOPD").style.display="none";
+    paketData=[];
+  }
+}
+
+/* ── Merge SIRUP + Sheets ── */
+/**
+ * dataSirup    : array paket dari SIRUP (kode_rup, nama, pagu, metode, sumber_dana, nama_penyedia)
+ * dataSheets   : array paket yang sudah pernah disimpan OPD
+ * dataRealisasi: array dari sheet DATA_REALISASI (kode_rup, total_nilai, nama_penyedia)
+ *
+ * Prioritas:
+ *   nama_penyedia  → SIRUP → Realisasi → Sheets (manual OPD)
+ *   nilai_kontrak  → Realisasi (Total Nilai) → Sheets (manual OPD)
+ */
+function mergeData(dataSirup, dataSheets, dataRealisasi=[]){
+  const sheetsMap = {};
+  dataSheets.forEach(p=>{ sheetsMap[p.kode_rup]=p; });
+  const realisasiMap = {};
+  dataRealisasi.forEach(p=>{ realisasiMap[p.kode_rup]=p; });
+
+  // Filter hanya Pekerjaan Konstruksi dari SIRUP
+  const sirupKonstruksi = dataSirup.filter(p=>
+    (p.jenis||"").toLowerCase().includes("konstruksi")
+  );
+  const rupKonstruksi = new Set(sirupKonstruksi.map(p=>p.kode_rup));
+
+  // ── Paket normal (masih valid di SIRUP) ──
+  const normalPaket = sirupKonstruksi.map(p=>{
+    const fromSheet     = sheetsMap[p.kode_rup]     || {};
+    const fromRealisasi = realisasiMap[p.kode_rup]  || {};
+
+    const nama_penyedia = fromRealisasi.nama_penyedia || fromSheet.nama_penyedia || "";
+    const nama_penyedia_src = fromRealisasi.nama_penyedia ? "realisasi" : fromSheet.nama_penyedia ? "manual" : "";
+    const nilai_kontrak = fromRealisasi.total_nilai || fromSheet.nilai_kontrak || "";
+    const nilai_kontrak_src = fromRealisasi.total_nilai ? "realisasi" : fromSheet.nilai_kontrak ? "manual" : "";
+
+    return {
+      orphan: false,
+      kode_rup: p.kode_rup, opd: p.opd, nama: p.nama,
+      sumber_dana: p.sumber_dana, pagu: p.pagu, metode: p.metode,
+      nama_penyedia, nama_penyedia_src, nilai_kontrak, nilai_kontrak_src,
+      bidang:              fromSheet.bidang              || "",
+      desa:                fromSheet.desa                || "",
+      kecamatan:           fromSheet.kecamatan           || "",
+      tw_mulai:            fromSheet.tw_mulai            || "",
+      tw_selesai:          fromSheet.tw_selesai          || "",
+      tgl_kontrak:         fromSheet.tgl_kontrak         || "",
+      waktu_hari:          fromSheet.waktu_hari          || "",
+      pelaksanaan_mulai:   fromSheet.pelaksanaan_mulai   || "",
+      pelaksanaan_selesai: fromSheet.pelaksanaan_selesai || "",
+      pct_keu:             fromSheet.pct_keu             || "",
+      pct_fisik:           fromSheet.pct_fisik           || "",
+      output:              fromSheet.output              || "",
+      tgl_pho:             fromSheet.tgl_pho             || "",
+      keterangan:          fromSheet.keterangan          || "",
+      jenis_pl:            fromSheet.jenis_pl            || "",
+      updated:             fromSheet.updated             || "",
+      alamat_penyedia:     fromSheet.alamat_penyedia     || "",
+      program_pokir:       fromSheet.program_pokir       || "",
+      program_pokir_src:   fromSheet.program_pokir_src   || "",
+      pengusul_pokir:      fromSheet.pengusul_pokir      || "",
+    };
+  });
+
+  // ── Paket orphan: ada di Sheets OPD tapi RUP-nya sudah tidak ada di SIRUP konstruksi ──
+  const orphanPaket = dataSheets
+    .filter(p=>!rupKonstruksi.has(p.kode_rup))
+    .map(p=>({
+      ...p,
+      nama: p.nama || p.nama_paket || "(Nama paket tidak tersedia)", // fix: dulu selalu "undefined"
+      orphan: true,
+    }));
+
+  // Orphan tampil PALING ATAS, lalu paket normal — nomor urut di-generate ulang
+  return [...orphanPaket, ...normalPaket].map((p,i)=>({ ...p, no: i+1 }));
+}
+
+/* ── Auto-tag Pokir dari pola nama paket: (P01 - 1153436) / (PD - ...) ── */
+function autoTagPokir(nama){
+  return /\((PD|P\d+)\s*-\s*\d+\)\s*$/i.test(nama||"");
+}
+
+/* ── Merge data untuk sub-tab Pengadaan Langsung ── */
+function mergeDataPL(dataRealisasi, dataSheetsPL, pkData, opdKey){
+  const plRealisasi = (dataRealisasi||[]).filter(r=>
+    r.opd===opdKey && (r.metode||"").toLowerCase()==="pengadaan langsung"
+  );
+
+  const pkByRup = {};
+  (pkData||[]).forEach(p=>{ if(p.kode_rup && !p.orphan) pkByRup[p.kode_rup]=p; });
+
+  const sheetsPLMap = {};
+  (dataSheetsPL||[]).forEach(p=>{ sheetsPLMap[p.kode_paket]=p; });
+
+  const normalPL = plRealisasi.map((r)=>{
+    const isKonstruksi = (r.jenis||"").toLowerCase().includes("konstruksi");
+    const pk     = isKonstruksi && r.kode_rup ? pkByRup[r.kode_rup] : null;
+    const linked = !!pk;
+    const sheetPL = sheetsPLMap[r.kode_paket] || {};
+    const src    = linked ? pk : sheetPL;
+    const autoTag = autoTagPokir(r.nama);
+
+    const pagu = linked ? (pk.pagu||"") : (sheetPL.pagu_manual||"");
+    const nl   = parseFloat(String(r.total_nilai||"").replace(/\D/g,""))||0;
+    const pg   = parseFloat(String(pagu).replace(/\D/g,""))||0;
+    const efisiensi = pagu ? (pg - nl) : null;
+
+    return {
+      linked,
+      kode_paket:  r.kode_paket,
+      kode_rup:    r.kode_rup,
+      nama:        r.nama,
+      jenis:       r.jenis,
+      sumber_dana: r.sumber_dana,
+      nama_penyedia: r.nama_penyedia,
+      nilai:       r.total_nilai,
+      pagu, efisiensi,
+      bidang:            src.bidang || "",
+      tgl_mulai:         linked ? (src.pelaksanaan_mulai||"")   : (src.tgl_mulai||""),
+      tgl_selesai:       linked ? (src.pelaksanaan_selesai||"") : (src.tgl_selesai||""),
+      waktu_hari:        src.waktu_hari || "",
+      alamat_penyedia:   src.alamat_penyedia || "",
+      program_pokir:     src.program_pokir     || (autoTag ? "Pokir DPRD" : ""),
+      program_pokir_src: src.program_pokir_src || (autoTag ? "auto" : ""),
+      pengusul_pokir:    src.pengusul_pokir || "",
+      keterangan:        src.keterangan || "",
+      output:            src.output || "",
+      updated:           src.updated || "",
+      opd: opdKey,
+    };
+  });
+
+  // ── Orphan PL: tersimpan di sheet PL tapi Kode Paket-nya sudah tidak ada di Realisasi (PL) ──
+  const kpRealisasi = new Set(plRealisasi.map(r=>r.kode_paket));
+  const orphanPL = (dataSheetsPL||[])
+    .filter(p=>!kpRealisasi.has(p.kode_paket))
+    .map(p=>{
+      const nl = parseFloat(String(p.nilai||"").replace(/\D/g,""))||0;
+      const pg = parseFloat(String(p.pagu_manual||"").replace(/\D/g,""))||0;
+      return {
+        orphan: true, linked: false,
+        kode_paket:  p.kode_paket,
+        kode_rup:    p.kode_rup,
+        nama:        p.nama || "(Nama paket tidak tersedia)",
+        jenis:       p.jenis,
+        sumber_dana: p.sumber_dana,
+        nama_penyedia: "",
+        nilai:       p.nilai,
+        pagu:        p.pagu_manual || "",
+        efisiensi:   p.pagu_manual ? (pg - nl) : null,
+        bidang:            p.bidang || "",
+        tgl_mulai:         p.tgl_mulai || "",
+        tgl_selesai:       p.tgl_selesai || "",
+        waktu_hari:        p.waktu_hari || "",
+        alamat_penyedia:   p.alamat_penyedia || "",
+        program_pokir:     p.program_pokir || "",
+        program_pokir_src: p.program_pokir_src || "",
+        pengusul_pokir:    p.pengusul_pokir || "",
+        keterangan:        p.keterangan || "",
+        output:            p.output || "",
+        updated:           p.updated || "",
+        opd: opdKey,
+      };
+    });
+
+  // Orphan tampil PALING ATAS, nomor urut di-generate ulang
+  return [...orphanPL, ...normalPL].map((p,i)=>({ ...p, no: i+1 }));
+}
+
+/* Hitung ulang data PL dari raw data (dipakai setelah simpan / hapus / perbarui) */
+function recomputePL(){
+  allDataPL   = mergeDataPL(rawRealisasi, rawSheetsPL, allData, selectedOPD);
+  paketDataPL = [...allDataPL];
+}
+
+/* Warning orphan khusus sub-tab Pengadaan Langsung (tampil di dalam panel PL saja) */
+function cekOrphanPL(){
+  const bar = document.getElementById("infoBarPL");
+  if(!bar) return;
+  const n = (allDataPL||[]).filter(p=>p.orphan).length;
+  if(n>0){
+    document.getElementById("infoTextPL").innerHTML =
+      `⚠️ Ditemukan <strong>${n} paket</strong> yang Kode Paket-nya tidak lagi ada di Data Realisasi (Pengadaan Langsung). `+
+      `Baris berwarna merah — klik <strong>"Perbarui Kode Paket"</strong> pada baris tersebut.`;
+    bar.style.display="flex";
+  } else {
+    bar.style.display="none";
+  }
+}
+
+function switchSubTab(tab){
+  currentSubTab = tab;
+  document.getElementById("subtabPL").classList.toggle("active", tab==="pl");
+  document.getElementById("subtabPK").classList.toggle("active", tab==="pk");
+  document.getElementById("panelPK").style.display = tab==="pk" ? "" : "none";
+  document.getElementById("panelPL").style.display = tab==="pl" ? "" : "none";
+  updateInfoBarVisibility(); // BARU
+}
+
+function renderAllPL(){
+  currentPagePL = 1;
+  renderPagePL();
+  cekOrphanPL();
+  refreshInfoBar();
+}
+
+function renderPagePL(){
+  const tb    = document.getElementById("tbodyPL");
+  const total = paketDataPL.length;
+
+  if(!total){
+    tb.innerHTML = `<tr><td colspan="18"><div class="empty"><div class="icon">📦</div><p>Tidak ada paket Pengadaan Langsung</p></div></td></tr>`;
+    document.getElementById("pagingBarPL").style.display="none";
+    return;
+  }
+
+  const totalPages = Math.ceil(total / pageSizePL);
+  currentPagePL    = Math.max(1, Math.min(currentPagePL, totalPages));
+  const start      = (currentPagePL - 1) * pageSizePL;
+  const end        = Math.min(start + pageSizePL, total);
+  const slice      = paketDataPL.slice(start, end);
+
+  tb.innerHTML = slice.map((p, localIdx)=>{
+    const i = start + localIdx; // index asli di paketDataPL, dipakai bukaModalPL(i)
+
+    const pokirBadge = p.program_pokir_src
+      ? `<span class="pokir-badge ${p.program_pokir_src}">${p.program_pokir_src==="auto"?"🏷️ Auto":"✎ Manual"}</span>`
+      : "";
+
+    const nilaiVal = p.nilai ? parseInt(String(p.nilai).replace(/\D/g,"")).toLocaleString("id-ID") : "—";
+    const paguVal  = p.pagu  ? parseInt(String(p.pagu).replace(/\D/g,"")).toLocaleString("id-ID")  : "—";
+    const efisVal  = p.efisiensi===null ? "—"
+      : `<span style="color:${p.efisiensi>=0?'var(--green)':'var(--red)'}">${p.efisiensi.toLocaleString("id-ID")}</span>`;
+
+    const txt = (v,ph="—") => v ? `<span style="font-size:12px;color:var(--text)">${v}</span>` : `<span style="color:var(--text-light);font-size:11px">${ph}</span>`;
+
+    const isOrphan = p.orphan === true;
+    const kodeCell = isOrphan
+      ? `<div class="rup-warn">
+           <span class="rup-warn-badge">⚠ ${p.kode_paket}</span>
+           <button class="btn-update-rup" onclick="bukaModalUpdateKP(${i})">Perbarui Kode Paket</button>
+         </div>`
+      : `<div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start">
+           <span style="font-family:var(--mono);font-size:10.5px;color:var(--text-muted)">${p.kode_paket}</span>
+           ${p.linked?'<span class="link-badge linked">🔗 Monitoring PK</span>':''}
+         </div>`;
+    const namaCellPL = isOrphan
+      ? `<span style="font-size:12px;font-weight:500;color:#8B1A1A;display:block;line-height:1.4">${p.nama}</span>
+         <span style="font-size:10px;color:#8B1A1A;opacity:.7;font-style:italic">⚠ Perbarui Kode Paket sebelum dapat mengedit</span>`
+      : `<span class="nama-link" onclick="if(!seleksiTeksAktif())bukaModalPL(${i})">${p.nama}</span>`;
+
+    return `
+    <tr class="${isOrphan?"rup-orphan":(p.linked?"":"pl-row")}">
+      <td class="no-col">${p.no}</td>
+      <td>${kodeCell}</td>
+      <td style="min-width:200px">${namaCellPL}</td>
+      <td style="min-width:150px">${txt(p.bidang,"-")}</td>
+      <td style="font-size:11px;text-align:center">${txt(p.jenis)}</td>
+      <td style="font-size:11px;text-align:center">${txt(p.sumber_dana)}</td>
+      <td style="text-align:center">${txt(p.nama_penyedia)}</td>
+      <td style="min-width:140px">${txt(p.alamat_penyedia)}</td>
+      <td style="text-align:right;font-family:var(--mono);font-size:11px">${nilaiVal}</td>
+      <td style="text-align:right;font-family:var(--mono);font-size:11px">${paguVal}</td>
+      <td style="text-align:right;font-family:var(--mono);font-size:11px">${efisVal}</td>
+      <td style="text-align:center">${txt(p.tgl_mulai)}</td>
+      <td style="text-align:center">${txt(p.tgl_selesai)}</td>
+      <td style="text-align:center">${txt(p.waktu_hari)}</td>
+      <td style="text-align:center;font-size:11px">${txt(p.program_pokir)}${pokirBadge}</td>
+      <td style="text-align:center;font-size:11px">${txt(p.pengusul_pokir)}</td>
+      <td style="min-width:160px">${txt(p.keterangan)}</td>
+      <td><div class="update-info">${p.updated?fmtUpdated(p.updated):"—"}</div></td>
+    </tr>`;
+  }).join("");
+
+  renderPagingBarPL(total, totalPages, start, end);
+}
+
+function goToPagePL(page){
+  currentPagePL = page;
+  renderPagePL();
+  document.getElementById("tablePL").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function ubahPageSizePL(val){
+  pageSizePL    = parseInt(val);
+  currentPagePL = 1;
+  renderPagePL();
+}
+
+function renderPagingBarPL(total, totalPages, start, end){
+  document.getElementById("pagingBarPL").style.display="flex";
+  document.getElementById("pagingInfoPL").innerHTML =
+    `Menampilkan <strong>${start+1}–${end}</strong> dari <strong>${total}</strong> paket`;
+
+  const nav = document.getElementById("pagingNavPL");
+  let html  = "";
+  html += `<button class="paging-btn" onclick="goToPagePL(${currentPagePL-1})" ${currentPagePL===1?"disabled":""}>‹</button>`;
+  getPageNumbers(currentPagePL, totalPages).forEach(p=>{
+    if(p==="...") html += `<span style="padding:0 4px;color:var(--text-muted);font-size:12px">…</span>`;
+    else html += `<button class="paging-btn${p===currentPagePL?" active":""}" onclick="goToPagePL(${p})">${p}</button>`;
+  });
+  html += `<button class="paging-btn" onclick="goToPagePL(${currentPagePL+1})" ${currentPagePL===totalPages?"disabled":""}>›</button>`;
+  nav.innerHTML = html;
+}
+
+/* ── Info bar: isi menyesuaikan sub-tab aktif ── */
+function refreshInfoBar(){
+  const bar = document.getElementById("infoBar");
+  const txt = document.getElementById("infoText");
+  if(!bar || !txt) return;
+  bar.style.display = "flex";
+  if(isSearchMode) return; // teks hasil pencarian diatur showForms()
+
+  const dot = bar.querySelector(".dot");
+  const lbl = OPD_LIST.find(o=>o.key===selectedOPD)?.label || selectedOPD;
+  const klik = t => "<span style='background:#1E5C3A;color:#fff;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;letter-spacing:.02em'>👆 "+t+"</span>";
+
+  if(currentSubTab==="pl"){
+    bar.classList.remove("warn"); if(dot) dot.style.background="";
+    txt.innerHTML = "<strong>"+lbl+"</strong> — "+(paketDataPL||[]).length+" paket <strong>realisasi Pengadaan Langsung</strong> &nbsp;&nbsp;"
+      + klik("Klik nama paket untuk input / edit data");
+    return;
+  }
+
+  const nOrphan = (paketData||[]).filter(p=>p.orphan).length;
+  if(nOrphan>0){
+    bar.classList.add("warn"); if(dot) dot.style.background="#8B1A1A";
+    txt.innerHTML =
+      `⚠️ Ditemukan <strong>${nOrphan} paket</strong> yang nomor RUP-nya tidak lagi ada di SIRUP. `+
+      `Kemungkinan RUP telah diubah. Baris berwarna merah — klik <strong>"Perbarui RUP"</strong> pada baris tersebut.`;
+  } else {
+    bar.classList.remove("warn"); if(dot) dot.style.background="";
+    txt.innerHTML = "<strong>"+lbl+"</strong> — "+(paketData||[]).length+" paket konstruksi (SiRUP) &nbsp;&nbsp;"
+      + klik("Klik nama pekerjaan untuk input / edit data");
+  }
+}
+
+/* ── Cek & tampilkan peringatan orphan ── */
+function cekOrphan(){ refreshInfoBar(); }
+
+function updateInfoBarVisibility(){ refreshInfoBar(); }
+
+/* ── Show/hide section ── */
+function showForms(searchMode,rupQuery){
+  document.getElementById("sectionForms").style.display="block";
+  const infoBar = document.getElementById("infoBar");
+  if(searchMode){
+    const jmlPK = paketData.length;
+    const jmlPL = (paketDataPL||[]).length;
+    document.getElementById("infoText").innerHTML=
+      "Hasil pencarian: <strong>"+rupQuery+"</strong> — "+jmlPK+" paket PK, "+jmlPL+" paket PL ditemukan";
+    // Mode pencarian bukan warning orphan — paksa tampil terlepas dari tab aktif / status warn sebelumnya
+    infoBar.classList.remove("warn");
+    infoBar.style.display="flex";
+  }else{
+    const lbl=OPD_LIST.find(o=>o.key===selectedOPD)?.label||selectedOPD;
+    document.getElementById("infoText").innerHTML=
+      "<strong>"+lbl+"</strong> — "+paketData.length+" paket &nbsp;&nbsp;"
+      +"<span style='background:#1E5C3A;color:#fff;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;letter-spacing:.02em'>"
+      +"👆 Klik nama pekerjaan untuk input / edit data</span>";
+    document.getElementById("headerOPD").textContent=selectedOPD;
+    document.getElementById("headerOPD").style.display="block";
+    refreshInfoBar();
+  }
+  document.getElementById("sectionForms").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* ── Render ── */
+function renderAll(){
+  currentPage = 1;
+  renderPage();
+}
+
+function renderPage(){
+  const tb    = document.getElementById("tbodyMain");
+  const total = paketData.length;
+
+  if(!total){
+    tb.innerHTML=`<tr><td colspan="25"><div class="empty"><div class="icon">📋</div><p>Tidak ada data paket</p></div></td></tr>`;
+    document.getElementById("pagingBar").style.display="none";
+    return;
+  }
+
+  const totalPages = Math.ceil(total / pageSize);
+  currentPage      = Math.max(1, Math.min(currentPage, totalPages));
+  const start      = (currentPage - 1) * pageSize;
+  const end        = Math.min(start + pageSize, total);
+  const slice      = paketData.slice(start, end);
+
+  tb.innerHTML = slice.map((p, localIdx) => {
+    const i        = start + localIdx;
+    const isPL     = (p.metode||"").toLowerCase().includes("pengadaan langsung");
+    const isOrphan = p.orphan === true;
+    const rowClass = [isPL?"pl-row":"", isOrphan?"rup-orphan":""].filter(Boolean).join(" ");
+
+    // ── RUP cell ──
+    const rupCell = isOrphan
+      ? `<div class="rup-warn">
+           <span class="rup-warn-badge">⚠ ${p.kode_rup}</span>
+           <button class="btn-update-rup" onclick="bukaModalUpdateRUP(${i})">Perbarui RUP</button>
+         </div>`
+      : `<span style="font-family:var(--mono);font-size:10.5px;color:var(--text-muted)">${p.kode_rup}</span>`;
+
+    // ── Nama cell ──
+    // Orphan: nama tidak bisa diklik — harus perbarui RUP dulu
+    const sudahDiisi = !!(p.bidang||p.tgl_kontrak||p.pct_keu||p.pct_fisik||p.nama_penyedia);
+    const namaCell = isOrphan
+      ? `<span style="font-size:12px;font-weight:500;color:#8B1A1A;display:block;line-height:1.4">${p.nama}</span>
+         <span style="font-size:10px;color:#8B1A1A;opacity:.7;font-style:italic">⚠ Perbarui RUP sebelum dapat mengedit</span>`
+      : `<span class="nama-link" onclick="if(!seleksiTeksAktif())bukaDetailModal(${i})">${p.nama}</span>
+         ${!sudahDiisi?'<span class="status-badge empty" style="margin-top:4px">Belum diisi</span>':''}`;
+
+    // ── Metode badge ──
+    let metodeBadge="";
+    if((p.metode||"").toLowerCase().includes("tender")){
+      metodeBadge=`<span class="metode-badge tender">📋 ${p.metode}</span>`;
+    }else if(isPL){
+      metodeBadge=`<span class="metode-badge pl">⚡ ${p.metode}</span>`;
+    }else{
+      metodeBadge=`<span class="metode-badge other">${p.metode||"—"}</span>`;
+    }
+
+    const srcLabel = {
+      realisasi: `<span style="font-size:9px;font-family:var(--mono);color:var(--blue);background:#EBF4FF;border:1px solid #B3D1F5;border-radius:3px;padding:1px 5px;white-space:nowrap">↙ Realisasi</span>`,
+      manual:    `<span style="font-size:9px;font-family:var(--mono);color:var(--text-muted);background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;white-space:nowrap">✎ Manual OPD</span>`,
+    };
+
+    // ── Penyedia & Nilai Kontrak (read-only) ──
+    const penyediaCell = `<div style="display:flex;flex-direction:column;gap:3px;align-items:center">
+      <span style="font-size:12px;color:${p.nama_penyedia?'var(--text)':'var(--text-light)'};text-align:center">${p.nama_penyedia||'—'}</span>
+      ${p.nama_penyedia_src?srcLabel[p.nama_penyedia_src]:""}
+    </div>`;
+
+    const nilaiVal = p.nilai_kontrak
+      ? parseInt(String(p.nilai_kontrak).replace(/\D/g,"")).toLocaleString("id-ID")
+      : null;
+    const nilaiKontrakCell = `<div style="display:flex;flex-direction:column;gap:3px;align-items:flex-end">
+      <span style="font-size:12px;font-family:var(--mono);color:${nilaiVal?'var(--text)':'var(--text-light)'}">${nilaiVal||'—'}</span>
+      ${p.nilai_kontrak_src?srcLabel[p.nilai_kontrak_src]:""}
+    </div>`;
+
+    // ── PL extra (read-only) ──
+    const plExtra = isPL && p.jenis_pl
+      ? p.jenis_pl === "Transaksional"
+        ? `<div style="margin-top:4px;font-size:10px;font-family:var(--mono);color:#1E5C3A;background:#D6EDE0;border:1px solid #A8D5B8;border-radius:3px;padding:1px 6px;display:inline-block">🟢 Transaksional</div>`
+        : `<div style="margin-top:4px;font-size:10px;font-family:var(--mono);color:#1A3F6F;background:#EBF4FF;border:1px solid #B3D1F5;border-radius:3px;padding:1px 6px;display:inline-block">🔵 Non-Transaksional</div>`
+      : "";
+
+    // ── Progress bar ──
+    const keu   = parseFloat(p.pct_keu)||0;
+    const fisik = parseFloat(p.pct_fisik)||0;
+
+    const pctKeuCell = `
+      <div style="font-size:12px;text-align:center;color:${keu?'var(--text)':'var(--text-light)'}">${keu?keu+"%":"—"}</div>
+      <div class="pct-bar-bg"><div class="pct-bar" style="width:${keu}%;background:var(--green)"></div></div>`;
+    const pctFisikCell = `
+      <div style="font-size:12px;text-align:center;color:${fisik?'var(--text)':'var(--text-light)'}">${fisik?fisik+"%":"—"}</div>
+      <div class="pct-bar-bg"><div class="pct-bar" style="width:${fisik}%;background:var(--blue)"></div></div>`;
+
+    // ── TW display ──
+    const twVal = (v) => v
+      ? `<span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text)">${v}</span>`
+      : `<span style="color:var(--text-light);font-size:11px">—</span>`;
+
+    // ── Tanggal display ──
+    const tgl = (v) => v
+      ? `<span style="font-family:var(--mono);font-size:11px;color:var(--text)">${v}</span>`
+      : `<span style="color:var(--text-light);font-size:11px">—</span>`;
+
+    // ── Teks singkat ──
+    const txt = (v, placeholder="—") => v
+      ? `<span style="font-size:12px;color:var(--text)">${v}</span>`
+      : `<span style="color:var(--text-light);font-size:11px">${placeholder}</span>`;
+
+    return `
+    <tr class="${rowClass}">
+      <td class="no-col">${p.no}</td>
+      <td class="rup-col">${rupCell}</td>
+      <td style="min-width:200px">${namaCell}</td>
+      <td style="min-width:200px">${txt(p.bidang,"-")}</td>
+      <td style="min-width:120px;text-align:center">${txt(p.desa)}</td>
+      <td style="min-width:110px;text-align:center">${txt(p.kecamatan)}</td>
+      <td style="font-size:12px;white-space:nowrap;text-align:center;color:${p.sumber_dana?'var(--text)':'var(--text-light)'}">${p.sumber_dana||'—'}</td>
+      <td style="font-size:12px;font-family:var(--mono);text-align:right;white-space:nowrap">${fmtPagu(p.pagu)}</td>
+      <td>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          ${metodeBadge}${plExtra}
+        </div>
+      </td>
+      <td style="text-align:center">${twVal(p.tw_mulai)}</td>
+      <td style="text-align:center">${twVal(p.tw_selesai)}</td>
+      <td style="text-align:center">${penyediaCell}</td>
+      <td style="text-align:right">${nilaiKontrakCell}</td>
+      <td style="text-align:center">${tgl(p.tgl_kontrak)}</td>
+      <td style="text-align:center">
+        ${p.waktu_hari
+          ? `<span style="font-family:var(--mono);font-size:12px;color:var(--text)">${p.waktu_hari}</span><span style="font-size:10px;color:var(--text-muted)"> HK</span>`
+          : `<span style="color:var(--text-light);font-size:11px">—</span>`}
+      </td>
+      <td style="text-align:center">${tgl(p.pelaksanaan_mulai)}</td>
+      <td style="text-align:center">${tgl(p.pelaksanaan_selesai)}</td>
+      <td>${pctKeuCell}</td>
+      <td>${pctFisikCell}</td>
+      <td style="min-width:180px">${txt(p.output)}</td>
+      <td style="text-align:center">${tgl(p.tgl_pho)}</td>
+      <td style="min-width:180px">${txt(p.keterangan)}</td>
+      <td><div class="update-info">${p.updated?fmtUpdated(p.updated):"—"}</div></td>
+    </tr>`;
+  }).join("");
+
+  renderPagingBar(total, totalPages, start, end);
+}
+
+/* ── Detail Modal ── */
+let _detailIdx = null;
+
+/* Cek apakah paket sudah punya data input dari OPD — dipakai buat nampilin/nyembunyiin tombol Hapus Data Input */
+function adaDataInputPK(p){
+  return !!(
+    p.bidang||p.desa||p.kecamatan||p.tw_mulai||p.tw_selesai||
+    p.nama_penyedia||p.nilai_kontrak||p.tgl_kontrak||p.waktu_hari||
+    p.pelaksanaan_mulai||p.pelaksanaan_selesai||p.pct_keu||p.pct_fisik||
+    p.output||p.tgl_pho||p.keterangan||p.jenis_pl
+  );
+}
+function adaDataInputPL(p){
+  // program_pokir yang keisi otomatis dari pola nama paket (program_pokir_src==="auto")
+  // TIDAK dihitung sebagai data input OPD — cuma dihitung kalau OPD isi/ubah manual
+  const programManual = p.program_pokir && p.program_pokir_src!=="auto";
+  return !!(
+    p.pagu_manual||p.bidang||p.tgl_mulai||p.tgl_selesai||p.waktu_hari||
+    p.alamat_penyedia||programManual||p.pengusul_pokir||p.keterangan||p.output
+  );
+}
+
+function bukaDetailModal(i){
+  const p = paketData[i];
+  _detailIdx = i;
+  const isPL = (p.metode||"").toLowerCase().includes("pengadaan langsung");
+
+  // Header
+  document.getElementById("detailRUP").textContent  = "RUP: " + p.kode_rup;
+  document.getElementById("detailNama").textContent  = p.nama;
+  document.getElementById("detailMetode").textContent= p.metode||"—";
+  document.getElementById("detailSumber").textContent= p.sumber_dana||"—";
+  document.getElementById("detailPagu").textContent  = "Rp "+fmtPagu(p.pagu);
+
+  // Footer
+  const lbl = OPD_LIST.find(o=>o.key===(p.opd||selectedOPD))?.label||(p.opd||selectedOPD);
+  document.getElementById("detailFooterLabel").textContent = lbl;
+  document.getElementById("detailFooterUpdated").textContent = p.updated?"Terakhir diperbarui: "+fmtUpdated(p.updated):"Belum pernah disimpan";
+
+  // Sumber badge
+  const realisasiBadge = `<span class="src-tag">↙ Realisasi</span>`;
+
+  // Body — generate semua field
+  document.getElementById("detailBody").innerHTML = `
+    <div class="detail-section-title">📋 Data Umum</div>
+
+    <div class="detail-field full">
+      <label>Bidang ${punyaBidang(p.opd||selectedOPD)?'<span class="req-tag">*</span>':'<span class="src-tag">Opsional</span>'}</label>
+      <select id="d_bidang" ${punyaBidang(p.opd||selectedOPD)?'':'disabled'} style="color:${p.bidang?'var(--text)':'var(--text-light)'}">
+        <option value="" style="color:var(--text-light)">${punyaBidang(p.opd||selectedOPD)?'— Pilih Bidang —':'— Tidak ada bidang untuk OPD ini —'}</option>
+        ${(BIDANG_OPD[p.opd||selectedOPD]||[]).map(b =>
+          `<option value="${b}" style="color:var(--text)"${p.bidang===b?' selected':''}>${b}</option>`
+        ).join('')}
+      </select>
+    </div>
+
+    <div class="detail-field">
+      <label>Desa / Kelurahan <span class="req-tag">*</span></label>
+      <input type="text" id="d_desa" value="${p.desa||''}" placeholder="Nama desa/kelurahan">
+    </div>
+    <div class="detail-field">
+      <label>Kecamatan <span class="req-tag">*</span></label>
+      <input type="text" id="d_kecamatan" value="${p.kecamatan||''}" placeholder="Nama kecamatan">
+    </div>
+
+    <div class="detail-field">
+      <label>Rencana Mulai (TW) <span class="req-tag">*</span></label>
+      <select id="d_tw_mulai" style="color:${p.tw_mulai?'var(--text)':'var(--text-light)'}">
+        <option value="" style="color:var(--text-light)">— Pilih —</option>
+        ${["I","II","III","IV"].map(tw=>`<option value="${tw}" style="color:var(--text)"${p.tw_mulai===tw?" selected":""}>${tw}</option>`).join("")}
+      </select>
+    </div>
+    <div class="detail-field">
+      <label>Rencana Selesai (TW) <span class="req-tag">*</span></label>
+      <select id="d_tw_selesai" style="color:${p.tw_selesai?'var(--text)':'var(--text-light)'}">
+        <option value="" style="color:var(--text-light)">— Pilih —</option>
+        ${["I","II","III","IV"].map(tw=>`<option value="${tw}" style="color:var(--text)"${p.tw_selesai===tw?" selected":""}>${tw}</option>`).join("")}
+      </select>
+    </div>
+
+    ${isPL?`
+    <div class="detail-field full">
+      <label>Jenis Transaksi <span class="req-tag">*</span></label>
+      <select id="d_jenis_pl" style="color:${p.jenis_pl?'var(--text)':'var(--text-light)'}">
+      <option value="" style="color:var(--text-light)">— Pilih —</option>
+      <option value="Transaksional" style="color:var(--text)"${p.jenis_pl==="Transaksional"?" selected":""}>Transaksional (E-PL)</option>
+      <option value="Non-Transaksional" style="color:var(--text)"${p.jenis_pl==="Non-Transaksional"?" selected":""}>Non-Transaksional</option>
+    </select>
+    </div>`:""}
+
+    <hr class="detail-divider">
+    <div class="detail-section-title">📄 Kontrak</div>
+
+    <div class="detail-field">
+      <label>Nama Penyedia ${p.nama_penyedia_src==="realisasi"?realisasiBadge:""}</label>
+      ${p.nama_penyedia_src==="realisasi"
+        ? `<input type="text" value="${p.nama_penyedia||''}" readonly>`
+        : `<input type="text" id="d_nama_penyedia" value="${p.nama_penyedia||''}" placeholder="Nama CV/PT/Perorangan">`
+      }
+    </div>
+    <div class="detail-field">
+      <label>Nilai Kontrak (Rp) ${p.nilai_kontrak_src==="realisasi"?realisasiBadge:""}</label>
+      ${p.nilai_kontrak_src==="realisasi"
+        ? `<input type="text" value="${p.nilai_kontrak||''}" readonly>`
+        : `<input type="text" id="d_nilai_kontrak" value="${p.nilai_kontrak||''}" placeholder="0" oninput="fmtRp(this)">`
+      }
+    </div>
+
+    <div class="detail-field">
+      <label>Tanggal Kontrak <span class="req-tag">*</span></label>
+      ${_dateField("d_tgl_kontrak", p.tgl_kontrak)}
+    </div>
+    <div class="detail-field">
+      <label>Waktu Pelaksanaan (Hari Kalender) <span class="req-tag">*</span></label>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="number" id="d_waktu_hari" value="${p.waktu_hari||''}" placeholder="0" min="0" style="flex:1">
+        <span style="font-size:12px;color:var(--text-muted);white-space:nowrap">HK</span>
+      </div>
+    </div>
+
+    <div class="detail-field">
+      <label>Mulai Pelaksanaan</label>
+      ${_dateField("d_pelaksanaan_mulai", p.pelaksanaan_mulai)}
+    </div>
+    <div class="detail-field">
+      <label>Selesai Pelaksanaan</label>
+      ${_dateField("d_pelaksanaan_selesai", p.pelaksanaan_selesai)}
+    </div>
+
+    <hr class="detail-divider">
+    <div class="detail-section-title">📊 Realisasi</div>
+
+    <div class="detail-field">
+      <label>% Keuangan</label>
+      <div class="detail-pct-wrap">
+        <input type="number" id="d_pct_keu" value="${p.pct_keu||''}" min="0" max="100" placeholder="0"
+          oninput="updDetailBar(this,'dbar_keu','var(--green)')">
+        <em>%</em>
+      </div>
+      <div class="detail-pct-bar"><div class="detail-pct-fill" id="dbar_keu" style="width:${p.pct_keu||0}%;background:var(--green)"></div></div>
+    </div>
+    <div class="detail-field">
+      <label>% Fisik</label>
+      <div class="detail-pct-wrap">
+        <input type="number" id="d_pct_fisik" value="${p.pct_fisik||''}" min="0" max="100" placeholder="0"
+          oninput="updDetailBar(this,'dbar_fisik','var(--blue)')">
+        <em>%</em>
+      </div>
+      <div class="detail-pct-bar"><div class="detail-pct-fill" id="dbar_fisik" style="width:${p.pct_fisik||0}%;background:var(--blue)"></div></div>
+    </div>
+
+    <div class="detail-field full">
+      <label>Output / Indikator</label>
+      <textarea id="d_output" placeholder="Deskripsikan output yang dicapai..." rows="2">${p.output||''}</textarea>
+    </div>
+
+    <div class="detail-field">
+      <label>Penyerahan PHO</label>
+      ${_dateField("d_tgl_pho", p.tgl_pho)}
+    </div>
+    <div class="detail-field">
+      <label>Keterangan</label>
+      <textarea id="d_keterangan" placeholder="Catatan tambahan..." rows="2">${p.keterangan||''}</textarea>
+    </div>
+  `;
+
+  // Pasang event onchange untuk TW select agar warna update
+  ["d_bidang","d_tw_mulai","d_tw_selesai","d_jenis_pl"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.onchange=function(){
+      this.style.color=this.value?'var(--text)':'var(--text-light)';
+      // pastikan semua option tetap hitam
+      this.querySelectorAll('option:not([value=""])').forEach(o=>o.style.color='var(--text)');
+    };
+  });
+
+  resetHapusInputPK();
+  document.getElementById("btnHapusInputPKFooter").style.display = adaDataInputPK(p) ? "" : "none";
+  document.getElementById("detailOverlay").classList.add("show");
+  document.getElementById("detailModal").scrollTop = 0;
+}
+
+function tutupDetailModal(){
+  document.getElementById("detailOverlay").classList.remove("show");
+  resetHapusInputPK();
+  _detailIdx = null;
+}
+
+// Tutup modal kalau klik di luar kotak
+let _detailMouseDownOnOverlay = false;
+document.getElementById("detailOverlay").addEventListener("mousedown", function(e){
+  _detailMouseDownOnOverlay = (e.target === this);
+});
+document.getElementById("detailOverlay").addEventListener("mouseup", function(e){
+  if(_detailMouseDownOnOverlay && e.target === this) tutupDetailModal();
+  _detailMouseDownOnOverlay = false;
+});
+
+let _plDetailIdx = null;
+
+function bukaModalPL(i){
+  const p = paketDataPL[i];
+  _plDetailIdx = i;
+
+  document.getElementById("plKodePaket").textContent  = "Kode Paket: " + p.kode_paket;
+  document.getElementById("plNama").textContent        = p.nama;
+  document.getElementById("plJenis").textContent       = p.jenis || "—";
+  document.getElementById("plSumberDana").textContent  = p.sumber_dana || "—";
+  document.getElementById("plLinkStatus").textContent  = p.linked ? "🔗 Tertaut Monitoring PK" : "⚪ Standalone";
+
+  const lbl = OPD_LIST.find(o=>o.key===(p.opd||selectedOPD))?.label||(p.opd||selectedOPD);
+  document.getElementById("plFooterLabel").textContent   = lbl;
+  document.getElementById("plFooterUpdated").textContent = p.updated?"Terakhir diperbarui: "+fmtUpdated(p.updated):"Belum pernah disimpan";
+
+  const paguField = p.linked
+    ? `<input type="text" value="${p.pagu?parseInt(String(p.pagu).replace(/\D/g,"")).toLocaleString("id-ID"):''}" readonly>`
+    : `<div class="rp-wrap"><span class="rp-prefix">Rp</span><input type="text" id="pl_pagu" value="${p.pagu?parseInt(String(p.pagu).replace(/\D/g,"")).toLocaleString("id-ID"):''}" placeholder="0" oninput="fmtRp(this)"></div>`;
+
+  document.getElementById("plDetailBody").innerHTML = `
+    <div class="detail-field full">
+      <label>Bidang ${punyaBidang(p.opd||selectedOPD)?'<span class="req-tag">*</span>':'<span class="src-tag">Opsional</span>'}</label>
+      <select id="pl_bidang" ${punyaBidang(p.opd||selectedOPD)?'':'disabled'} style="color:${p.bidang?'var(--text)':'var(--text-light)'}">
+        <option value="" style="color:var(--text-light)">${punyaBidang(p.opd||selectedOPD)?'— Pilih Bidang —':'— Tidak ada bidang untuk OPD ini —'}</option>
+        ${(BIDANG_OPD[p.opd||selectedOPD]||[]).map(b =>
+          `<option value="${b}" style="color:var(--text)"${p.bidang===b?' selected':''}>${b}</option>`
+        ).join('')}
+      </select>
+    </div>
+
+    <div class="detail-field">
+      <label>Total Pagu (Rp) ${p.linked?'<span class="src-tag">↙ Monitoring PK</span>':'<span class="req-tag">*</span>'}</label>
+      ${paguField}
+    </div>
+    <div class="detail-field">
+      <label>Nilai Realisasi (Rp) <span class="src-tag">↙ Realisasi</span></label>
+      <input type="text" value="${p.nilai?(parseInt(String(p.nilai).replace(/\D/g,""))||0).toLocaleString("id-ID"):''}" placeholder="Belum ada realisasi" readonly>
+    </div>
+
+    <div class="detail-field">
+      <label>Alamat Penyedia <span class="req-tag">*</span></label>
+      <input type="text" id="pl_alamat" value="${p.alamat_penyedia||''}" placeholder="Alamat penyedia">
+    </div>
+    <div class="detail-field">
+      <label>Waktu Pelaksanaan (Hari Kalender) <span class="src-tag">⚙ Otomatis</span></label>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="text" id="pl_waktu_hari" value="${hitungHKdariTgl(p.tgl_mulai,p.tgl_selesai)??''}" placeholder="Terhitung otomatis" readonly style="flex:1">
+        <span style="font-size:12px;color:var(--text-muted);white-space:nowrap">HK</span>
+      </div>
+
+      <div id="pl_waktu_hint" style="font-size:10px;color:var(--text-muted);margin-top:4px">Dihitung dari Tanggal Mulai s.d. Tanggal Selesai (termasuk hari pertama)</div>
+    </div>
+
+    <div class="detail-field">
+      <label>Tanggal Mulai <span class="req-tag">*</span></label>
+      ${_dateField("pl_tgl_mulai", p.tgl_mulai)}
+    </div>
+    <div class="detail-field">
+      <label>Tanggal Selesai <span class="req-tag">*</span></label>
+      ${_dateField("pl_tgl_selesai", p.tgl_selesai)}
+    </div>
+
+    <div class="detail-field">
+      <label>Program <span class="req-tag">*</span></label>
+      <select id="pl_program" onchange="togglePengusul()" style="color:${p.program_pokir?'var(--text)':'var(--text-light)'}">
+        <option value="" style="color:var(--text-light)">— Pilih —</option>
+        <option value="Program OPD" style="color:var(--text)"${p.program_pokir==="Program OPD"?" selected":""}>Program OPD</option>
+        <option value="Pokir DPRD" style="color:var(--text)"${p.program_pokir==="Pokir DPRD"?" selected":""}>Pokir DPRD</option>
+      </select>
+      ${p.program_pokir_src==="auto" ? `<div style="font-size:10px;color:var(--blue);margin-top:4px">🏷️ Terisi otomatis dari pola nama paket — boleh diubah manual</div>` : ""}
+    </div>
+
+    <div class="detail-field" id="pl_pengusul_wrap" style="display:${p.program_pokir==="Pokir DPRD"?"flex":"none"}">
+      <label>Pengusul (Pokir DPRD)</label>
+      <input type="text" id="pl_pengusul" value="${p.pengusul_pokir||''}" placeholder="Nama pengusul">
+      <div style="font-size:10px;color:var(--blue);margin-top:4px">✍️ isi "-" jika tidak memiliki informasi nama pengusul</div>
+    </div>
+
+    <div class="detail-field full">
+      <label>Keterangan</label>
+      <textarea id="pl_keterangan" placeholder="Catatan tambahan..." rows="2">${p.keterangan||''}</textarea>
+    </div>
+    <div class="detail-field full">
+      <label>Output</label>
+      <textarea id="pl_output" placeholder="Output / deskripsi hasil..." rows="2">${p.output||''}</textarea>
+    </div>
+  `;
+
+  ["pl_tgl_mulai","pl_tgl_selesai"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener("input", hitungWaktuPL);
+    el.addEventListener("blur",  hitungWaktuPL);   // jalan setelah finalizeDate (inline onblur)
+  });
+  hitungWaktuPL();
+
+  const selBidang = document.getElementById("pl_bidang");
+  selBidang.onchange = function(){
+    this.style.color=this.value?'var(--text)':'var(--text-light)';
+    this.querySelectorAll('option:not([value=""])').forEach(o=>o.style.color='var(--text)');
+  };
+
+  resetHapusInputPL();
+  document.getElementById("btnHapusInputPLFooter").style.display = adaDataInputPL(p) ? "" : "none";
+  document.getElementById("plDetailOverlay").classList.add("show");
+  document.getElementById("plDetailModal").scrollTop = 0;
+}
+
+/** Hitung Hari Kalender dari dua tanggal DD/MM/YYYY (inklusif hari pertama).
+ *  Return: angka HK | null jika salah satu kosong/format tidak valid */
+function hitungHKdariTgl(mulai, selesai){
+  const parse = t=>{
+    const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec((t||"").trim());
+    if(!m) return null;
+    const d=+m[1], mo=+m[2], y=+m[3];
+    const dt = new Date(Date.UTC(y,mo-1,d));
+    if(dt.getUTCFullYear()!==y || dt.getUTCMonth()!==mo-1 || dt.getUTCDate()!==d) return null;
+    return dt.getTime();
+  };
+  const a=parse(mulai), b=parse(selesai);
+  if(a===null || b===null) return null;
+  return Math.round((b-a)/86400000)+1;
+}
+
+/** Isi otomatis field Waktu Pelaksanaan di modal PL */
+function hitungWaktuPL(){
+  const inp  = document.getElementById("pl_waktu_hari");
+  const hint = document.getElementById("pl_waktu_hint");
+  if(!inp) return;
+  const v = id => (document.getElementById(id)?.value||"").trim();
+  const hk = hitungHKdariTgl(v("pl_tgl_mulai"), v("pl_tgl_selesai"));
+  const normal = "Dihitung dari Tanggal Mulai s.d. Tanggal Selesai (termasuk hari pertama)";
+  if(hk===null){
+    inp.value = "";
+    if(hint){ hint.style.color="var(--text-muted)"; hint.textContent = normal; }
+  } else if(hk<1){
+    inp.value = "";
+    if(hint){ hint.style.color="#E53E3E"; hint.textContent = "⚠ Tanggal Selesai tidak boleh sebelum Tanggal Mulai"; }
+  } else {
+    inp.value = hk;
+    if(hint){ hint.style.color="var(--text-muted)"; hint.textContent = normal; }
+  }
+}
+
+
+function togglePengusul(){
+  const sel  = document.getElementById("pl_program");
+  const wrap = document.getElementById("pl_pengusul_wrap");
+  wrap.style.display = sel.value==="Pokir DPRD" ? "flex" : "none";
+  sel.style.color = sel.value?'var(--text)':'var(--text-light)';
+}
+
+function tutupModalPL(){
+  document.getElementById("plDetailOverlay").classList.remove("show");
+  resetHapusInputPL();
+  _plDetailIdx = null;
+}
+
+let _plMouseDownOnOverlay = false;
+document.getElementById("plDetailOverlay").addEventListener("mousedown", function(e){
+  _plMouseDownOnOverlay = (e.target === this);
+});
+document.getElementById("plDetailOverlay").addEventListener("mouseup", function(e){
+  if(_plMouseDownOnOverlay && e.target === this) tutupModalPL();
+  _plMouseDownOnOverlay = false;
+});
+
+async function simpanPL(){
+  if(_plDetailIdx === null) return;
+  if(!authToken){ toast("Sesi habis, silakan login ulang","error"); bukaLoginModal(); return; }
+
+  const p = paketDataPL[_plDetailIdx];
+  const g = id => { const el=document.getElementById(id); return el?el.value.trim():""; };
+
+  const bidang     = g("pl_bidang");
+  const alamat     = g("pl_alamat");
+  const tglMulai   = g("pl_tgl_mulai");
+  const tglSelesai = g("pl_tgl_selesai");
+  let   waktuHari  = "";   // dihitung otomatis dari tanggal (lihat bawah)
+  const program    = g("pl_program");
+  const pengusul   = g("pl_pengusul");
+  const paguManual = p.linked ? "" : g("pl_pagu");   // kosong & tidak divalidasi kalau tertaut
+
+  // ── Validasi field wajib ──
+  const wajib = [
+    ...(punyaBidang(p.opd||selectedOPD) ? [{v:bidang, el:"pl_bidang", label:"Bidang"}] : []),
+    {v:alamat,     el:"pl_alamat",     label:"Alamat Penyedia"},
+    {v:tglMulai,   el:"pl_tgl_mulai",  label:"Tanggal Mulai"},
+    {v:tglSelesai, el:"pl_tgl_selesai",label:"Tanggal Selesai"},
+    {v:program,    el:"pl_program",    label:"Program"},
+    ...(p.linked ? [] : [{v:paguManual, el:"pl_pagu", label:"Total Pagu"}]),
+  ];
+  const kosong = wajib.filter(f=>!f.v);
+  if(kosong.length){
+    toast("Wajib diisi: "+kosong.map(f=>f.label).join(", "),"error");
+    document.getElementById(kosong[0].el).scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+
+  // ── Waktu pelaksanaan: hitung ulang dari tanggal (tidak bergantung isi field) ──
+  const hk = hitungHKdariTgl(tglMulai, tglSelesai);
+  if(hk===null){
+    toast("Format tanggal tidak valid, gunakan DD/MM/YYYY","error");
+    document.getElementById("pl_tgl_mulai").scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+  if(hk<1){
+    toast("Tanggal Selesai tidak boleh sebelum Tanggal Mulai","error");
+    document.getElementById("pl_tgl_selesai").scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+  waktuHari = String(hk);
+
+  const now = new Date().toISOString();
+  const btn = document.getElementById("btnPLSave");
+  btn.disabled = true; btn.textContent = "Menyimpan...";
+
+  const detail = {
+    bidang,
+    alamat_penyedia:   alamat,
+    tgl_mulai:         tglMulai,
+    tgl_selesai:       tglSelesai,
+    waktu_hari:        waktuHari,
+    program_pokir:     program,
+    program_pokir_src: (program === p.program_pokir && p.program_pokir_src==="auto") ? "auto" : "manual",
+    pengusul_pokir:    program==="Pokir DPRD" ? pengusul : "",
+    keterangan:        g("pl_keterangan"),
+    output:            g("pl_output"),
+  };
+
+  try{
+    if(p.linked){
+      // ── Tulis ke row Monitoring PK yang sama (satu sumber data, bukan row terpisah) ──
+      const idxPK = paketData.findIndex(x=>x.kode_rup===p.kode_rup && !x.orphan);
+      if(idxPK===-1) throw new Error("Paket terkait di Monitoring PK tidak ditemukan");
+
+      Object.assign(paketData[idxPK], {
+        bidang:              detail.bidang,
+        alamat_penyedia:     detail.alamat_penyedia,
+        pelaksanaan_mulai:   detail.tgl_mulai,
+        pelaksanaan_selesai: detail.tgl_selesai,
+        waktu_hari:          detail.waktu_hari,
+        program_pokir:       detail.program_pokir,
+        program_pokir_src:   detail.program_pokir_src,
+        pengusul_pokir:      detail.pengusul_pokir,
+        keterangan:          detail.keterangan,
+        output:              detail.output,
+        updated:             now,
+      });
+
+      const payload = {
+        action: "saveData", opd: paketData[idxPK].opd || selectedOPD,
+        updated: now, token: authToken, data: [{ ...paketData[idxPK] }]
+      };
+      const res = await fetch(APPS_SCRIPT_URL, {method:"POST", body:JSON.stringify(payload)});
+      const r   = await res.json();
+      if(!r.success) throw new Error(r.error||"Gagal");
+
+    } else {
+      // ── Standalone: tulis ke sheet PL ──
+      const rowData = {
+        kode_paket: p.kode_paket, kode_rup: p.kode_rup||"",
+        nama: p.nama, jenis: p.jenis, metode: p.metode||"Pengadaan Langsung",
+        sumber_dana: p.sumber_dana, nilai: p.nilai,
+        pagu_manual: paguManual.replace(/\D/g,""),
+        ...detail,
+      };
+      const payload = { action: "saveDataPL", opd: p.opd || selectedOPD, updated: now, token: authToken, data: [rowData] };
+      const res = await fetch(APPS_SCRIPT_URL, {method:"POST", body:JSON.stringify(payload)});
+      const r   = await res.json();
+      if(!r.success) throw new Error(r.error||"Gagal");
+
+      const idxRaw = rawSheetsPL.findIndex(x=>x.kode_paket===p.kode_paket);
+      if(idxRaw>-1) Object.assign(rawSheetsPL[idxRaw], rowData, {updated:now});
+      else rawSheetsPL.push({...rowData, updated: now});
+    }
+
+    toast("Paket PL berhasil disimpan ✓","success");
+    tutupModalPL();
+
+    recomputePL();
+    renderAllPL();
+    renderAll();
+    cekOrphan();
+
+  }catch(e){
+    if(e.message.includes("Sesi habis")||e.message.includes("login ulang")){
+      authToken=""; authRole=""; isAdmin=false; bukaLoginModal();
+    }
+    toast("Gagal menyimpan: "+e.message,"error");
+  }finally{
+    btn.disabled=false; btn.textContent="Simpan Paket Ini →";
+  }
+}
+
+/** Buat date field untuk modal detail */
+function _dateField(id, val){
+  return `<div class="date-wrap">
+    <input type="text" id="${id}" value="${val||''}" placeholder="DD/MM/YYYY"
+      maxlength="10" oninput="liveDate(this)" onblur="finalizeDate(this)"
+      onkeydown="if(event.key==='Enter'){event.preventDefault();finalizeDate(this);this.blur();}">
+    <span class="cal-icon">📅</span>
+    <input type="date" onchange="calToText('${id}',this)" tabindex="-1">
+  </div>`;
+}
+
+function updDetailBar(inp, barId, color){
+  const v = Math.min(100, Math.max(0, parseFloat(inp.value)||0));
+  const b = document.getElementById(barId);
+  if(b){ b.style.width=v+"%"; b.style.background=color; }
+}
+
+/** Kumpulkan nilai dari modal detail */
+function _collectDetail(){
+  const isPL = _detailIdx!==null && (paketData[_detailIdx]?.metode||"").toLowerCase().includes("pengadaan langsung");
+  const pPrev = paketData[_detailIdx] || {};
+
+  const g = id => { const el=document.getElementById(id); return el?el.value:""; };
+
+  return {
+    bidang:              g("d_bidang"),
+    desa:                g("d_desa"),
+    kecamatan:           g("d_kecamatan"),
+    tw_mulai:            g("d_tw_mulai"),
+    tw_selesai:          g("d_tw_selesai"),
+    jenis_pl:            isPL ? g("d_jenis_pl") : (pPrev.jenis_pl||""),
+    // Nama penyedia & nilai kontrak: kalau dari realisasi, pakai nilai existing
+    nama_penyedia:       pPrev.nama_penyedia_src==="realisasi" ? (pPrev.nama_penyedia||"") : g("d_nama_penyedia"),
+    nilai_kontrak:       pPrev.nilai_kontrak_src==="realisasi" ? (pPrev.nilai_kontrak||"") : g("d_nilai_kontrak"),
+    tgl_kontrak:         g("d_tgl_kontrak"),
+    waktu_hari:          g("d_waktu_hari"),
+    pelaksanaan_mulai:   g("d_pelaksanaan_mulai"),
+    pelaksanaan_selesai: g("d_pelaksanaan_selesai"),
+    pct_keu:             g("d_pct_keu"),
+    pct_fisik:           g("d_pct_fisik"),
+    output:              g("d_output"),
+    tgl_pho:             g("d_tgl_pho"),
+    keterangan:          g("d_keterangan"),
+  };
+}
+
+async function simpanDetail(){
+  if(_detailIdx === null) return;
+  if(!authToken){ toast("Sesi habis, silakan login ulang","error"); bukaLoginModal(); return; }
+
+  const isPL = (paketData[_detailIdx]?.metode||"").toLowerCase().includes("pengadaan langsung");
+  const g    = id => { const el=document.getElementById(id); return el?el.value.trim():""; };
+  
+  // ── Validasi field wajib ──
+  const wajib = [
+    ...(punyaBidang(paketData[_detailIdx].opd||selectedOPD)?[{id:"d_bidang", label:"Bidang"}]:[]),
+    {id:"d_desa",         label:"Desa / Kelurahan"},
+    {id:"d_kecamatan",    label:"Kecamatan"},
+    {id:"d_tw_mulai",     label:"Rencana Mulai (TW)"},
+    {id:"d_tw_selesai",   label:"Rencana Selesai (TW)"},
+    {id:"d_tgl_kontrak",  label:"Tanggal Kontrak"},
+    {id:"d_waktu_hari",   label:"Waktu Pelaksanaan"},
+    ...(isPL?[{id:"d_jenis_pl", label:"Jenis Transaksi"}]:[]),
+  ];
+
+  const errors = wajib.filter(f => !g(f.id));
+
+  // Highlight border merah/hijau
+  wajib.forEach(f => {
+    const el = document.getElementById(f.id);
+    if(!el) return;
+    el.style.borderColor = g(f.id) ? "var(--border)" : "#E53E3E";
+    el.style.boxShadow   = g(f.id) ? "" : "0 0 0 3px rgba(229,62,62,.1)";
+  });
+
+  if(errors.length){
+    toast("Wajib diisi: "+errors.map(e=>e.label).join(", "),"error");
+    // Scroll ke field pertama yang kosong
+    const firstEl = document.getElementById(errors[0].id);
+    if(firstEl) firstEl.scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
+
+  // ── Validasi: Nilai Kontrak tidak boleh melebihi Pagu ──
+  const pkt = paketData[_detailIdx];
+  const isNilaiReadonly = pkt.nilai_kontrak_src === "realisasi";
+  if (!isNilaiReadonly) {
+    const nilaiInput = parseFloat(g("d_nilai_kontrak").replace(/\D/g,"")) || 0;
+    const paguPaket   = parseFloat(pkt.pagu) || 0;
+    if (nilaiInput > paguPaket) {
+      const elNilai = document.getElementById("d_nilai_kontrak");
+      elNilai.style.borderColor = "#E53E3E";
+      elNilai.style.boxShadow   = "0 0 0 3px rgba(229,62,62,.1)";
+      toast("Nilai Kontrak (Rp "+nilaiInput.toLocaleString("id-ID")+") tidak boleh melebihi Pagu (Rp "+paguPaket.toLocaleString("id-ID")+")","error");
+      elNilai.scrollIntoView({behavior:"smooth", block:"center"});
+      return;
+    }
+  }
+
+  const i      = _detailIdx;
+  const p      = paketData[i];
+  const detail = _collectDetail();
+  const opdSave = p.opd || selectedOPD;
+  const now    = new Date().toISOString();
+
+  // Update paketData lokal — termasuk update _src agar badge Manual OPD muncul
+  const srcUpdate = {};
+  if (detail.nama_penyedia && p.nama_penyedia_src !== "realisasi")
+    srcUpdate.nama_penyedia_src = "manual";
+  if (detail.nilai_kontrak && p.nilai_kontrak_src !== "realisasi")
+    srcUpdate.nilai_kontrak_src = "manual";
+  Object.assign(paketData[i], detail, srcUpdate, { updated: now });
+
+  // Siapkan payload — satu paket saja
+  const payload = {
+    action:  "saveData",
+    opd:     opdSave,
+    updated: now,
+    token:   authToken,
+    data:    [{ ...paketData[i] }]
+  };
+
+  document.getElementById("btnDetailSave").disabled = true;
+  document.getElementById("btnDetailSave").textContent = "Menyimpan...";
+
+  try{
+    const res = await fetch(APPS_SCRIPT_URL, {method:"POST", body:JSON.stringify(payload)});
+    const r   = await res.json();
+    if(!r.success) throw new Error(r.error||"Gagal");
+
+    toast("Paket berhasil disimpan ✓","success");
+    document.getElementById("headerUpdate").textContent = "Update: "+fmtUpdated(now);
+    tutupDetailModal();
+    renderPage(); // refresh tabel untuk update status badge
+  }catch(e){
+    if(e.message.includes("Sesi habis")||e.message.includes("login ulang")){
+      authToken=""; authRole=""; isAdmin=false; bukaLoginModal();
+    }
+    toast("Gagal menyimpan: "+e.message,"error");
+  }finally{
+    document.getElementById("btnDetailSave").disabled = false;
+    document.getElementById("btnDetailSave").textContent = "Simpan Paket Ini →";
+  }
+}
+
+function goToPage(page){
+  console.log("goToPage dipanggil, page =", page);
+  currentPage = page;
+  renderPage();
+  document.getElementById("mainTable").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function ubahPageSize(val){
+  pageSize    = parseInt(val);
+  currentPage = 1;
+  renderPage();
+}
+
+function renderPagingBar(total, totalPages, start, end){
+  document.getElementById("pagingBar").style.display="flex";
+  document.getElementById("pagingInfo").innerHTML =
+    `Menampilkan <strong>${start+1}–${end}</strong> dari <strong>${total}</strong> paket`;
+
+  const nav = document.getElementById("pagingNav");
+  let html  = "";
+  html += `<button class="paging-btn" onclick="goToPage(${currentPage-1})" ${currentPage===1?"disabled":""}>‹</button>`;
+  getPageNumbers(currentPage, totalPages).forEach(p=>{
+    if(p==="...") html += `<span style="padding:0 4px;color:var(--text-muted);font-size:12px">…</span>`;
+    else html += `<button class="paging-btn${p===currentPage?" active":""}" onclick="goToPage(${p})">${p}</button>`;
+  });
+  html += `<button class="paging-btn" onclick="goToPage(${currentPage+1})" ${currentPage===totalPages?"disabled":""}>›</button>`;
+  nav.innerHTML = html;
+}
+
+function getPageNumbers(current, total){
+  if(total<=7) return Array.from({length:total},(_,i)=>i+1);
+  const pages=[];
+  if(current<=4){ for(let i=1;i<=5;i++) pages.push(i); pages.push("..."); pages.push(total); }
+  else if(current>=total-3){ pages.push(1); pages.push("..."); for(let i=total-4;i<=total;i++) pages.push(i); }
+  else { pages.push(1); pages.push("..."); for(let i=current-1;i<=current+1;i++) pages.push(i); pages.push("..."); pages.push(total); }
+  return pages;
+}
+
+/* ── Auto-resize textarea ── */
+function autoResize(el){
+  el.style.height="auto";
+  el.style.height=Math.max(el.scrollHeight,54)+"px";
+}
+function autoResizeAll(){
+  document.querySelectorAll("textarea.auto-ta").forEach(autoResize);
+}
+
+/* ── Modal Update RUP ── */
+let _modalIdx = null;
+
+function bukaModalUpdateRUP(i){
+  const p = paketData[i];
+  _modalIdx = i;
+  document.getElementById("modalSub").innerHTML =
+    `Paket: <strong>${p.nama}</strong><br>`+
+    `RUP lama: <code style="background:#FFDEDE;padding:1px 5px;border-radius:3px">${p.kode_rup}</code> — tidak ditemukan di SIRUP saat ini.`;
+  document.getElementById("inputRUPBaru").value = "";
+  document.getElementById("inputRUPBaru").disabled = false;
+  batalKonfirmasiBeda();
+  resetHapusPaket();
+  document.getElementById("modalUpdateRUP").classList.add("show");
+  setTimeout(()=>document.getElementById("inputRUPBaru").focus(), 100);
+}
+
+function tutupModal(){
+  document.getElementById("modalUpdateRUP").classList.remove("show");
+  batalKonfirmasiBeda();
+  resetHapusPaket();
+  _modalIdx = null;
+}
+
+function batalKonfirmasiBeda(){
+  document.getElementById("konfirmasiBeda").style.display = "none";
+  document.getElementById("modalActionsNormal").style.display = "flex";
+  document.getElementById("modalActionsKonfirmasi").style.display = "none";
+  document.getElementById("inputRUPBaru").disabled = false;
+}
+
+function tampilkanKonfirmasiBedaPaket(lama, baru){
+  document.getElementById("kbNamaLama").textContent = lama.nama || "—";
+  document.getElementById("kbPaguLama").textContent  = fmtPagu(lama.pagu);
+  document.getElementById("kbNamaBaru").textContent  = baru.nama || "—";
+  document.getElementById("kbPaguBaru").textContent  = fmtPagu(baru.pagu);
+  document.getElementById("konfirmasiBeda").style.display = "block";
+  document.getElementById("modalActionsNormal").style.display = "none";
+  document.getElementById("modalActionsKonfirmasi").style.display = "flex";
+  document.getElementById("inputRUPBaru").disabled = true;
+}
+
+function resetHapusPaket(){
+  document.getElementById("hapusPaketSection").style.display="none";
+  document.getElementById("btnBukaHapus").style.display="inline-block";
+  document.getElementById("inputPasswordHapus").value="";
+}
+
+function toggleHapusPaket(){
+  const section = document.getElementById("hapusPaketSection");
+  const showing = section.style.display==="block";
+  section.style.display = showing?"none":"block";
+  document.getElementById("btnBukaHapus").style.display = showing?"inline-block":"none";
+  document.getElementById("inputPasswordHapus").value="";
+  if(!showing) setTimeout(()=>document.getElementById("inputPasswordHapus").focus(),100);
+}
+
+function toggleHapusInputPK(){
+  const section = document.getElementById("hapusInputPKSection");
+  const showing = section.style.display==="block";
+  section.style.display = showing?"none":"block";
+  document.getElementById("inputPasswordHapusInputPK").value="";
+  if(!showing) setTimeout(()=>document.getElementById("inputPasswordHapusInputPK").focus(),100);
+}
+function resetHapusInputPK(){
+  const section = document.getElementById("hapusInputPKSection");
+  if(section) section.style.display="none";
+  const inp = document.getElementById("inputPasswordHapusInputPK");
+  if(inp) inp.value="";
+}
+
+async function konfirmasiHapusInputPK(){
+  if(_detailIdx === null) return;
+  const password = document.getElementById("inputPasswordHapusInputPK").value.trim();
+  if(!password){ toast("Masukkan password untuk konfirmasi","error"); return; }
+
+  const p = paketData[_detailIdx];
+  const opdCek = p.opd || selectedOPD;
+  const btn = document.getElementById("btnKonfirmasiHapusInputPK");
+  btn.disabled = true; btn.textContent = "Memverifikasi...";
+
+  try{
+    const verifUrl = APPS_SCRIPT_URL
+      +"?action=verifyAuth"
+      +"&opd="+encodeURIComponent(isAdmin ? "ALL" : opdCek)
+      +"&password="+encodeURIComponent(password)
+      +"&role="+(isAdmin?"admin":"opd");
+    const verifRes  = await fetch(verifUrl);
+    const verifData = await verifRes.json();
+    if(verifData.error) throw new Error("Password salah");
+
+    const res = await fetch(APPS_SCRIPT_URL, {method:"POST", body:JSON.stringify({
+      action: "clearInputPK", opd: opdCek, kode_rup: p.kode_rup, token: authToken
+    })});
+    const r = await res.json();
+    if(!r.success) throw new Error(r.error||"Gagal menghapus data input");
+
+    Object.assign(paketData[_detailIdx], {
+      bidang:"", desa:"", kecamatan:"", tw_mulai:"", tw_selesai:"",
+      nama_penyedia: p.nama_penyedia_src==="realisasi" ? p.nama_penyedia : "",
+      nama_penyedia_src: p.nama_penyedia_src==="realisasi" ? "realisasi" : "",
+      nilai_kontrak: p.nilai_kontrak_src==="realisasi" ? p.nilai_kontrak : "",
+      nilai_kontrak_src: p.nilai_kontrak_src==="realisasi" ? "realisasi" : "",
+      tgl_kontrak:"", waktu_hari:"", pelaksanaan_mulai:"", pelaksanaan_selesai:"",
+      pct_keu:"", pct_fisik:"", output:"", tgl_pho:"", keterangan:"", jenis_pl:"",
+      alamat_penyedia:"", program_pokir:"", program_pokir_src:"", pengusul_pokir:"",
+      updated:"",
+    });
+
+    tutupDetailModal();
+    renderPage();
+    recomputePL();
+    renderAllPL();
+
+    toast("Data input paket berhasil dihapus","success");
+  }catch(e){
+    toast("Gagal: "+e.message,"error");
+  }finally{
+    btn.disabled=false; btn.textContent="Konfirmasi Hapus Data";
+  }
+}
+
+function toggleHapusInputPL(){
+  const section = document.getElementById("hapusInputPLSection");
+  const showing = section.style.display==="block";
+  section.style.display = showing?"none":"block";
+  document.getElementById("inputPasswordHapusInputPL").value="";
+  if(!showing) setTimeout(()=>document.getElementById("inputPasswordHapusInputPL").focus(),100);
+}
+function resetHapusInputPL(){
+  const section = document.getElementById("hapusInputPLSection");
+  if(section) section.style.display="none";
+  const inp = document.getElementById("inputPasswordHapusInputPL");
+  if(inp) inp.value="";
+}
+
+async function konfirmasiHapusInputPL(){
+  if(_plDetailIdx === null) return;
+  const password = document.getElementById("inputPasswordHapusInputPL").value.trim();
+  if(!password){ toast("Masukkan password untuk konfirmasi","error"); return; }
+
+  const p = paketDataPL[_plDetailIdx];
+  const opdCek = p.opd || selectedOPD;
+  const btn = document.getElementById("btnKonfirmasiHapusInputPL");
+  btn.disabled = true; btn.textContent = "Memverifikasi...";
+
+  try{
+    const verifUrl = APPS_SCRIPT_URL
+      +"?action=verifyAuth"
+      +"&opd="+encodeURIComponent(isAdmin ? "ALL" : opdCek)
+      +"&password="+encodeURIComponent(password)
+      +"&role="+(isAdmin?"admin":"opd");
+    const verifRes  = await fetch(verifUrl);
+    const verifData = await verifRes.json();
+    if(verifData.error) throw new Error("Password salah");
+
+    if(p.linked){
+      const res = await fetch(APPS_SCRIPT_URL, {method:"POST", body:JSON.stringify({
+        action: "clearInputPK", opd: opdCek, kode_rup: p.kode_rup, token: authToken
+      })});
+      const r = await res.json();
+      if(!r.success) throw new Error(r.error||"Gagal menghapus data input");
+
+      const idxPK = paketData.findIndex(x=>x.kode_rup===p.kode_rup && !x.orphan);
+      if(idxPK>-1){
+        Object.assign(paketData[idxPK], {
+          bidang:"", desa:"", kecamatan:"", tw_mulai:"", tw_selesai:"",
+          tgl_kontrak:"", waktu_hari:"", pelaksanaan_mulai:"", pelaksanaan_selesai:"",
+          pct_keu:"", pct_fisik:"", output:"", tgl_pho:"", keterangan:"", jenis_pl:"",
+          alamat_penyedia:"", program_pokir:"", program_pokir_src:"", pengusul_pokir:"",
+          updated:"",
+        });
+      }
+    } else {
+      const res = await fetch(APPS_SCRIPT_URL, {method:"POST", body:JSON.stringify({
+        action: "deletePaketPL", opd: opdCek, kode_paket: p.kode_paket, token: authToken
+      })});
+      const r = await res.json();
+      if(!r.success) throw new Error(r.error||"Gagal menghapus data input");
+
+      rawSheetsPL = rawSheetsPL.filter(x=>x.kode_paket!==p.kode_paket);
+    }
+
+    tutupModalPL();
+    recomputePL();
+    renderAllPL();
+    renderAll();
+
+    toast("Data input paket berhasil dihapus","success");
+  }catch(e){
+    toast("Gagal: "+e.message,"error");
+  }finally{
+    btn.disabled=false; btn.textContent="Konfirmasi Hapus Data";
+  }
+}
+
+async function simpanUpdateRUP(confirmed){
+  const rupBaru = document.getElementById("inputRUPBaru").value.trim();
+  if(!rupBaru){ toast("Masukkan nomor RUP baru","error"); return; }
+  if(_modalIdx === null) return;
+
+  const i        = _modalIdx;
+  const rupLama  = paketData[i].kode_rup;
+  const opdSave  = paketData[i].opd || selectedOPD;
+  const tombol   = confirmed
+    ? document.querySelector('#modalActionsKonfirmasi .btn-modal-save')
+    : document.getElementById("btnSimpanRUP");
+
+  if(tombol){ tombol.disabled = true; tombol.textContent = confirmed ? "Menyimpan..." : "Memeriksa..."; }
+
+  try{
+    const payload = {
+      action:    "updateRUP",
+      opd:       opdSave,
+      rup_lama:  rupLama,
+      rup_baru:  rupBaru,
+      token:     authToken,
+      confirmed: !!confirmed,
+      updated:   new Date().toISOString()
+    };
+    const res = await fetch(APPS_SCRIPT_URL, {method:"POST", body:JSON.stringify(payload)});
+    const r   = await res.json();
+
+    if(r.needs_confirmation){
+      tampilkanKonfirmasiBedaPaket(r.lama, r.baru);
+      return; // tunggu keputusan user — jangan tutup modal, jangan ubah data lokal
+    }
+    if(!r.success) throw new Error(r.error || "Gagal memperbarui RUP");
+
+    // Muat ulang dari server supaya tidak ada baris ganda
+    const tabAktif = currentSubTab;
+    tutupModal();
+    toast(`RUP berhasil diperbarui: ${rupLama} → ${rupBaru}`, "success");
+    await _loadDataWithToken(opdSave);
+    switchSubTab(tabAktif);
+
+  }catch(e){
+    toast("Gagal: "+e.message, "error");
+    if(confirmed) batalKonfirmasiBeda(); // biar user bisa coba nomor lain
+  }finally{
+    if(tombol){ tombol.disabled = false; tombol.textContent = confirmed ? "Ya, ini paket yang sama" : "Simpan RUP Baru"; }
+  }
+}
+
+
+/* ── Hapus paket orphan PK (Monitoring PK) — wajib verifikasi password ── */
+async function konfirmasiHapusPaket(){
+  if(_modalIdx === null) return;
+  const password = document.getElementById("inputPasswordHapus").value.trim();
+  if(!password){ toast("Masukkan password untuk konfirmasi hapus","error"); return; }
+
+  const p = paketData[_modalIdx];
+  const opdCek = p.opd || selectedOPD;
+  const btn = document.getElementById("btnKonfirmasiHapus");
+  btn.disabled = true; btn.textContent = "Memverifikasi...";
+
+  try{
+    const verifUrl = APPS_SCRIPT_URL
+      +"?action=verifyAuth"
+      +"&opd="+encodeURIComponent(isAdmin ? "ALL" : opdCek)
+      +"&password="+encodeURIComponent(password)
+      +"&role="+(isAdmin?"admin":"opd");
+    const verifData = await (await fetch(verifUrl)).json();
+    if(verifData.error) throw new Error("Password salah");
+
+    const res = await fetch(APPS_SCRIPT_URL, {method:"POST", body:JSON.stringify({
+      action: "deletePaket", opd: opdCek, kode_rup: p.kode_rup, token: authToken
+    })});
+    const r = await res.json();
+    if(!r.success) throw new Error(r.error||"Gagal menghapus paket");
+
+    const rupHapus = p.kode_rup;
+    allData = allData.filter(x=>!(x.kode_rup===rupHapus && x.orphan===true));
+    allData.forEach((x,idx)=>x.no=idx+1);
+    paketData = isSearchMode
+      ? paketData.filter(x=>!(x.kode_rup===rupHapus && x.orphan===true))
+      : [...allData];
+
+    tutupModal();
+    recomputePL();
+    renderAll(); renderAllPL(); cekOrphan();
+    toast("Paket berhasil dihapus: "+rupHapus,"success");
+  }catch(e){
+    toast("Gagal: "+e.message,"error");
+  }finally{
+    btn.disabled=false; btn.textContent="Konfirmasi Hapus";
+  }
+}
+
+/* ══════════ Perbarui Kode Paket / Hapus Paket — sub-tab Pengadaan Langsung ══════════ */
+let _modalKPIdx = null;
+
+function bukaModalUpdateKP(i){
+  const p = paketDataPL[i];
+  _modalKPIdx = i;
+  document.getElementById("modalSubKP").innerHTML =
+    `Paket: <strong>${p.nama}</strong><br>`+
+    `Kode Paket lama: <code style="background:#FFDEDE;padding:1px 5px;border-radius:3px">${p.kode_paket}</code> — tidak ditemukan di Data Realisasi (Pengadaan Langsung) saat ini.`;
+  document.getElementById("inputKPBaru").value = "";
+  document.getElementById("inputKPBaru").disabled = false;
+  batalKonfirmasiBedaKP();
+  resetHapusPaketKP();
+  document.getElementById("modalUpdateKP").classList.add("show");
+  setTimeout(()=>document.getElementById("inputKPBaru").focus(), 100);
+}
+
+function tutupModalKP(){
+  document.getElementById("modalUpdateKP").classList.remove("show");
+  batalKonfirmasiBedaKP();
+  resetHapusPaketKP();
+  _modalKPIdx = null;
+}
+
+function batalKonfirmasiBedaKP(){
+  document.getElementById("konfirmasiBedaKP").style.display = "none";
+  document.getElementById("modalActionsNormalKP").style.display = "flex";
+  document.getElementById("modalActionsKonfirmasiKP").style.display = "none";
+  document.getElementById("inputKPBaru").disabled = false;
+}
+
+function tampilkanKonfirmasiBedaKP(lama, baru){
+  document.getElementById("kpNamaLama").textContent  = lama.nama || "—";
+  document.getElementById("kpNilaiLama").textContent = fmtPagu(lama.nilai);
+  document.getElementById("kpNamaBaru").textContent  = baru.nama || "—";
+  document.getElementById("kpNilaiBaru").textContent = fmtPagu(baru.nilai);
+  document.getElementById("konfirmasiBedaKP").style.display = "block";
+  document.getElementById("modalActionsNormalKP").style.display = "none";
+  document.getElementById("modalActionsKonfirmasiKP").style.display = "flex";
+  document.getElementById("inputKPBaru").disabled = true;
+}
+
+function resetHapusPaketKP(){
+  document.getElementById("hapusPaketSectionKP").style.display="none";
+  document.getElementById("btnBukaHapusKP").style.display="inline-block";
+  document.getElementById("inputPasswordHapusKP").value="";
+}
+
+function toggleHapusPaketKP(){
+  const section = document.getElementById("hapusPaketSectionKP");
+  const showing = section.style.display==="block";
+  section.style.display = showing?"none":"block";
+  document.getElementById("btnBukaHapusKP").style.display = showing?"inline-block":"none";
+  document.getElementById("inputPasswordHapusKP").value="";
+  if(!showing) setTimeout(()=>document.getElementById("inputPasswordHapusKP").focus(),100);
+}
+
+async function simpanUpdateKP(confirmed){
+  const kpBaru = document.getElementById("inputKPBaru").value.trim();
+  if(!kpBaru){ toast("Masukkan Kode Paket baru","error"); return; }
+  if(_modalKPIdx === null) return;
+
+  const p       = paketDataPL[_modalKPIdx];
+  const kpLama  = p.kode_paket;
+  const opdSave = p.opd || selectedOPD;
+  const tombol  = document.getElementById(confirmed ? "btnLanjutKP" : "btnSimpanKP");
+  const teksAsli = confirmed ? "Ya, ini paket yang sama" : "Simpan Kode Paket Baru";
+
+  if(tombol){ tombol.disabled = true; tombol.textContent = confirmed ? "Menyimpan..." : "Memeriksa..."; }
+
+  try{
+    const res = await fetch(APPS_SCRIPT_URL, {method:"POST", body:JSON.stringify({
+      action: "updateKodePaket", opd: opdSave,
+      kode_paket_lama: kpLama, kode_paket_baru: kpBaru,
+      token: authToken, confirmed: !!confirmed,
+      updated: new Date().toISOString()
+    })});
+    const r = await res.json();
+
+    if(r.needs_confirmation){
+      tampilkanKonfirmasiBedaKP(r.lama, r.baru);
+      return; // tunggu keputusan user — jangan tutup modal, jangan ubah data lokal
+    }
+    if(!r.success) throw new Error(r.error || "Gagal memperbarui Kode Paket");
+
+    // Update lokal SETELAH backend berhasil
+    const idxRaw = rawSheetsPL.findIndex(x=>x.kode_paket===kpLama);
+    if(idxRaw>-1){
+      rawSheetsPL[idxRaw].kode_paket      = kpBaru;
+      rawSheetsPL[idxRaw].kode_paket_lama = kpLama;
+      if(r.baru){
+        rawSheetsPL[idxRaw].kode_rup     = r.baru.kode_rup     || "";
+        rawSheetsPL[idxRaw].nama         = r.baru.nama         || rawSheetsPL[idxRaw].nama;
+        rawSheetsPL[idxRaw].jenis        = r.baru.jenis        || rawSheetsPL[idxRaw].jenis;
+        rawSheetsPL[idxRaw].metode       = r.baru.metode       || rawSheetsPL[idxRaw].metode;
+        rawSheetsPL[idxRaw].sumber_dana  = r.baru.sumber_dana  || rawSheetsPL[idxRaw].sumber_dana;
+        rawSheetsPL[idxRaw].nilai        = r.baru.nilai        || rawSheetsPL[idxRaw].nilai;
+      }
+    }
+    tutupModalKP();
+    recomputePL(); renderAllPL();
+    toast(`Kode Paket berhasil diperbarui: ${kpLama} → ${kpBaru}`, "success");
+
+  }catch(e){
+    toast("Gagal: "+e.message, "error");
+    if(confirmed) batalKonfirmasiBedaKP();
+  }finally{
+    if(tombol){ tombol.disabled = false; tombol.textContent = teksAsli; }
+  }
+}
+
+async function konfirmasiHapusPaketKP(){
+  if(_modalKPIdx === null) return;
+  const password = document.getElementById("inputPasswordHapusKP").value.trim();
+  if(!password){ toast("Masukkan password untuk konfirmasi hapus","error"); return; }
+
+  const p = paketDataPL[_modalKPIdx];
+  const opdCek = p.opd || selectedOPD;
+  const btn = document.getElementById("btnKonfirmasiHapusKP");
+  btn.disabled = true; btn.textContent = "Memverifikasi...";
+
+  try{
+    const verifUrl = APPS_SCRIPT_URL
+      +"?action=verifyAuth"
+      +"&opd="+encodeURIComponent(isAdmin ? "ALL" : opdCek)
+      +"&password="+encodeURIComponent(password)
+      +"&role="+(isAdmin?"admin":"opd");
+    const verifData = await (await fetch(verifUrl)).json();
+    if(verifData.error) throw new Error("Password salah");
+
+    const res = await fetch(APPS_SCRIPT_URL, {method:"POST", body:JSON.stringify({
+      action: "deletePaketPL", opd: opdCek, kode_paket: p.kode_paket, token: authToken
+    })});
+    const r = await res.json();
+    if(!r.success) throw new Error(r.error||"Gagal menghapus paket");
+
+    const kpHapus = p.kode_paket;
+    rawSheetsPL = rawSheetsPL.filter(x=>x.kode_paket!==kpHapus);
+    tutupModalKP();
+    recomputePL(); renderAllPL();
+    toast("Paket berhasil dihapus: "+kpHapus,"success");
+  }catch(e){
+    toast("Gagal: "+e.message,"error");
+  }finally{
+    btn.disabled=false; btn.textContent="Konfirmasi Hapus";
+  }
+}
+
+/* ── Helpers ── */
+function twSel(i,k,val){
+  return `<select data-i="${i}" data-k="${k}"
+    style="min-width:62px;color:${val?'var(--text)':'var(--text-light)'}"
+    onchange="this.style.color=this.value?'var(--text)':'var(--text-light)'">
+    <option value="" style="color:var(--text-light)">—</option>
+    ${["I","II","III","IV"].map(tw=>`<option value="${tw}" style="color:var(--text)"${val===tw?" selected":""}>${tw}</option>`).join("")}
+  </select>`;
+}
+
+function rpWrap(i,k,val,mw){
+  return `<div class="rp-wrap" style="min-width:${mw||120}px">
+    <span class="rp-prefix">Rp</span>
+    <input type="text" data-i="${i}" data-k="${k}" value="${val||''}" placeholder="0" oninput="fmtRp(this)">
+  </div>`;
+}
+
+/**
+ * Date input dengan 2 cara: ketik manual (DD/MM/YYYY) ATAU klik ikon kalender
+ * Kalender hidden di belakang ikon, saat dipilih otomatis isi field teks.
+ */
+function dateInp(i,k,val){
+  const uid=`di_${i}_${k}`;
+  const calId=`cal_${i}_${k}`;
+  return `<div class="date-wrap">
+    <input type="text"
+      id="${uid}"
+      data-i="${i}"
+      data-k="${k}"
+      value="${val||''}"
+      placeholder="DD/MM/YYYY"
+      maxlength="10"
+      oninput="liveDate(this)"
+      onblur="finalizeDate(this)"
+      onkeydown="if(event.key==='Enter'){event.preventDefault();finalizeDate(this);this.blur();}"
+    >
+    <span class="cal-icon">📅</span>
+    <input type="date" id="${calId}"
+      onchange="calToText('${uid}',this)"
+      tabindex="-1"
+    >
+  </div>`;
+}
+
+/** Saat kalender dipilih → tulis ke field teks dalam format DD/MM/YYYY */
+function calToText(textId, calInput){
+  if(!calInput.value) return;
+  const [y,m,d]=calInput.value.split("-");
+  document.getElementById(textId).value=`${d}/${m}/${y}`;
+  calInput.value=""; // reset supaya bisa dipilih ulang
+  if(textId.startsWith("pl_")) hitungWaktuPL();
+}
+
+function liveDate(inp){
+  let v=inp.value.replace(/\D/g,"");
+  if(v.length>8)v=v.slice(0,8);
+  let out="";
+  if(v.length===0){out="";}
+  else if(v.length<=2){out=v;}
+  else if(v.length<=4){out=v.slice(0,2)+"/"+v.slice(2);}
+  else{out=v.slice(0,2)+"/"+v.slice(2,4)+"/"+v.slice(4);}
+  inp.value=out;
+}
+
+function finalizeDate(inp){
+  if(!inp.value)return;
+  const parts=inp.value.split("/");
+  if(parts.length!==3)return;
+  let[dd,mm,yy]=parts;
+  if(yy.length===2){
+    const yr=parseInt(yy,10);
+    yy=yr<50?"20"+yy:"19"+yy;
+  }
+  if(yy.length===4) inp.value=`${dd}/${mm}/${yy}`;
+}
+
+function updBar(inp,id){
+  const v=Math.min(100,Math.max(0,parseFloat(inp.value)||0));
+  const b=document.getElementById(id);
+  if(b)b.style.width=v+"%";
+}
+
+function fmtPagu(val){
+  if(!val||val==="—") return "—";
+  const n=parseInt(String(val).replace(/\D/g,""));
+  return isNaN(n)?"—":n.toLocaleString("id-ID");
+}
+
+function fmtPct(val){
+  const n = parseFloat(val);
+  if(val===""||val===null||val===undefined||isNaN(n)) return "—";
+  return n.toLocaleString("id-ID",{minimumFractionDigits:2,maximumFractionDigits:2})+"%";
+}
+
+function fmtRp(inp){
+  const v=inp.value.replace(/\D/g,"");
+  inp.value=v?parseInt(v).toLocaleString("id-ID"):"";
+}
+
+function fmtUpdated(iso){
+  if(!iso)return"—";
+  try{
+    const d=new Date(iso);
+    return d.toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"})+
+           " "+d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+  }catch(e){return iso;}
+}
+
+function toast(msg,type){
+  const t=document.getElementById("toast");
+  t.textContent=msg;t.className="toast "+type+" show";
+  setTimeout(()=>t.classList.remove("show"),3500);
+}
+
+function setLoading(show,text){
+  document.getElementById("loadingOverlay").classList.toggle("show",show);
+  if(text)document.getElementById("loadingText").textContent=text;
+}
+
+/* ══════════════ DASHBOARD ══════════════ */
+
+function switchTab(tab){
+  document.getElementById("tabInput").classList.toggle("active", tab==="input");
+  document.getElementById("tabDashboard").classList.toggle("active", tab==="dashboard");
+  document.getElementById("viewInput").style.display     = tab==="input" ? "" : "none";
+  document.getElementById("viewDashboard").style.display  = tab==="dashboard" ? "" : "none";
+
+  if(tab==="dashboard" && !dashboardLoaded){
+    loadDashboard();
+  }
+}
+
+async function loadDashboard(forceRefresh){
+  const grid = document.getElementById("dashOpdGrid");
+  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--text-muted);font-size:12px">Memuat data dashboard...</div>`;
+
+  try{
+    const url = APPS_SCRIPT_URL + "?action=getDashboardData" + (forceRefresh ? "&_t="+Date.now() : "");
+    const res  = await fetch(url);
+    const data = await res.json();
+    if(data.error) throw new Error(data.error);
+
+    dashboardData   = data;
+    dashboardLoaded  = true;
+    renderDashboard();
+  }catch(e){
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--red);font-size:12px">
+      ⚠️ Gagal memuat dashboard: ${e.message}
+    </div>`;
+    document.getElementById("dashSummary").innerHTML = "";
+  }
+}
+
+function renderDashboard(){
+  if(!dashboardData) return;
+  const { summary, per_opd, generated_at } = dashboardData;
+
+  const genDate = generated_at ? fmtUpdated(generated_at) : "—";
+  document.getElementById("dashRefreshInfo").innerHTML =
+    `Data per: ${genDate} &nbsp;·&nbsp; <a href="javascript:loadDashboard(true)" style="color:var(--green);text-decoration:underline;cursor:pointer">🔄 Refresh</a>`;
+
+  const pctIsi = summary.total_paket ? Math.round((summary.total_sudah_diisi/summary.total_paket)*10000)/100 : 0;
+  document.getElementById("dashSummary").innerHTML = `
+    <div class="dash-card">
+      <div class="dash-label">Total Paket Konstruksi</div>
+      <div class="dash-value">${summary.total_paket.toLocaleString("id-ID")}</div>
+      <div class="dash-sub">10 OPD Acuan - TA 2026</div>
+    </div>
+    <div class="dash-card green">
+      <div class="dash-label">Sudah Diisi OPD</div>
+      <div class="dash-value">${summary.total_sudah_diisi.toLocaleString("id-ID")}</div>
+      <div class="dash-progress-row">
+        <div class="dash-progress-bg"><div class="dash-progress-fill" style="width:${pctIsi}%;background:var(--green)"></div></div>
+        <div class="dash-progress-pct">${fmtPct(pctIsi)}</div>
+      </div>
+    </div>
+    <div class="dash-card amber">
+      <div class="dash-label">Rata-rata Progress</div>
+      <div class="dash-value">${fmtPct(summary.avg_pct_fisik)}</div>
+      <div class="dash-sub">Fisik &nbsp;·&nbsp; Keuangan ${fmtPct(summary.avg_pct_keu)}</div>
+    </div>
+    <div class="dash-card ${summary.total_orphan>0?'red':''}">
+      <div class="dash-label">RUP Perlu Diperbarui</div>
+      <div class="dash-value">${summary.total_orphan.toLocaleString("id-ID")}</div>
+      <div class="dash-sub">${summary.total_orphan>0?'⚠ Perlu tindak lanjut OPD':'Semua RUP valid'}</div>
+    </div>
+  `;
+
+  const grid = document.getElementById("dashOpdGrid");
+  if(!per_opd || !per_opd.length){
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text-muted);font-size:12px">Belum ada data OPD</div>`;
+    return;
+  }
+
+  grid.innerHTML = per_opd.map((o, idx) => {
+    const lbl = OPD_LIST.find(x=>x.key===o.opd)?.label || o.opd;
+    const pctIsiOPD = o.jumlah_paket ? Math.round((o.sudah_diisi/o.jumlah_paket)*10000)/100 : 0;
+    const hasOrphan = o.orphan > 0;
+
+    return `
+    <div class="dash-opd-card" id="dashCard_${idx}" onclick="toggleDashCard(${idx})">
+      <div class="dash-opd-header">
+        <div class="dash-opd-name">${lbl}</div>
+        <div class="dash-opd-badge ${hasOrphan?'warn':'ok'}">${hasOrphan?'⚠ '+o.orphan+' orphan':'✓ valid'}</div>
+      </div>
+      <div class="dash-opd-stats">
+        <div>Paket: <strong>${o.jumlah_paket}</strong></div>
+        <div>Diisi: <strong>${o.sudah_diisi}</strong></div>
+        <div>Belum: <strong>${o.belum_diisi}</strong></div>
+      </div>
+      <div class="dash-progress-row">
+        <div class="dash-progress-bg"><div class="dash-progress-fill" style="width:${pctIsiOPD}%;background:var(--green)"></div></div>
+        <div class="dash-progress-pct">${fmtPct(pctIsiOPD)}</div>
+      </div>
+      <div class="dash-opd-detail" id="dashDetail_${idx}">
+        <div class="dash-opd-detail-row"><span>Pagu Total</span><strong>Rp ${fmtPagu(o.pagu)}</strong></div>
+        <div class="dash-opd-detail-row"><span>Nilai Kontrak</span><strong>Rp ${fmtPagu(o.nilai_kontrak)}</strong></div>
+        <div class="dash-opd-detail-row"><span>Rata-rata % Keuangan</span><strong>${fmtPct(o.avg_pct_keu)}</strong></div>
+        <div class="dash-opd-detail-row"><span>Rata-rata % Fisik</span><strong>${fmtPct(o.avg_pct_fisik)}</strong></div>
+        <div class="dash-opd-detail-row"><span>Paket Orphan (RUP berubah)</span><strong style="color:${hasOrphan?'var(--red)':'var(--text)'}">${o.orphan}</strong></div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function toggleDashCard(idx){
+  const card   = document.getElementById("dashCard_"+idx);
+  const detail = document.getElementById("dashDetail_"+idx);
+  const isOpen = detail.classList.contains("show");
+  detail.classList.toggle("show", !isOpen);
+  card.classList.toggle("expanded", !isOpen);
+}
+</script>
+</body>
+</html>
