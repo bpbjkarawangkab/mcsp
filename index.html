@@ -26,6 +26,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .header-chip.active{background:rgba(255,255,255,.2);color:#fff;font-weight:600}
 .header-right{margin-left:auto}
 .last-update{font-size:11px;color:rgba(255,255,255,.5);font-family:var(--mono)}
+.btn-keluar{padding:5px 12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);border-radius:4px;color:#fff;font-size:11px;font-family:var(--sans);font-weight:600;cursor:pointer;transition:background .15s}
+.btn-keluar:hover{background:rgba(255,255,255,.25)}
 
 .container{max-width:1700px;margin:0 auto;padding:24px 24px 100px}
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow: hidden;margin-bottom:16px}
@@ -334,6 +336,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .pokir-badge.auto{background:#EBF4FF;color:var(--blue);border:1px solid #B3D1F5}
 .pokir-badge.manual{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)}
 
+/* Filter bar sub-tab Realisasi */
+.filter-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 18px 4px}
+.filter-bar label{font-size:10.5px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.filter-bar select{padding:7px 10px;border:1px solid var(--border);border-radius:5px;font-size:12px;font-family:var(--sans);background:#fff;color:var(--text);outline:none;transition:border-color .12s}
+.filter-bar select:focus{border-color:var(--green);box-shadow:0 0 0 2px rgba(30,92,58,.08)}
+
 /* ════════ DASHBOARD ════════ */
 .dash-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
 .dash-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px}
@@ -408,6 +416,23 @@ const BIDANG_OPD={
 
 /* OPD tanpa daftar bidang (Bagian, Kecamatan, Kelurahan, Puskesmas) -> field Bidang opsional */
 function punyaBidang(opd){ return (BIDANG_OPD[opd]||[]).length>0; }
+
+/* ── Kecamatan -> Desa (cascading dropdown Lokasi PK) ──
+   KECAMATAN_LIST diturunkan dari daftar OPD kecamatan yang sudah ada (bukan data baru).
+   KECAMATAN_DESA masih kosong — isi nanti { "Nama Kecamatan": ["Desa A","Desa B", ...] }.
+   Desa tetap input bebas (bukan dropdown ketat) supaya data lama yang sudah terisi
+   tidak pernah hilang walau belum ada di daftar KECAMATAN_DESA. */
+const KECAMATAN_LIST = [...new Set(
+  OPD_LIST.filter(o=>o.key.startsWith("KEC_")).map(o=>o.label.replace(/^Kecamatan\s+/i,""))
+)].sort((a,b)=>a.localeCompare(b,"id"));
+const KECAMATAN_DESA = {};
+
+function updateDesaOptionsPK(){
+  const kec = document.getElementById("d_kecamatan")?.value || "";
+  const dl  = document.getElementById("dlDesaPK");
+  if(!dl) return;
+  dl.innerHTML = (KECAMATAN_DESA[kec]||[]).map(d=>`<option value="${d}">`).join("");
+}
 </script>
 
 <div class="loading-overlay" id="loadingOverlay">
@@ -483,7 +508,7 @@ function punyaBidang(opd){ return (BIDANG_OPD[opd]||[]).length>0; }
 
     <div id="hapusPaketSection" style="display:none;margin-top:14px">
       <div class="modal-note" style="border-left:3px solid #8B1A1A;background:#FFF0F0;color:#8B1A1A">
-        ⚠️ Tindakan ini menghapus paket secara permanen dari sistem dan tidak bisa dibatalkan. Masukkan password untuk konfirmasi.
+        ⚠️ Tindakan ini menghapus paket secara permanen dari sistem dan tidak bisa dibatalkan. Isian OPD untuk paket ini yang tampil di tab Realisasi juga ikut terhapus. Masukkan password untuk konfirmasi.
       </div>
       <div class="modal-field" style="margin-top:10px">
         <label>Password Konfirmasi</label>
@@ -679,8 +704,9 @@ function punyaBidang(opd){ return (BIDANG_OPD[opd]||[]).length>0; }
     <div class="header-chip">TA 2026</div>
     <div class="header-chip" id="headerOPD" style="display:none"></div>
   </div>
-  <div class="header-right">
+  <div class="header-right" style="display:flex;align-items:center;gap:12px">
     <div class="last-update" id="headerUpdate"></div>
+    <button class="btn-keluar" id="btnKeluar" style="display:none" onclick="keluar()" title="Keluar dan hapus sesi login">Keluar</button>
   </div>
 </div>
 
@@ -719,8 +745,8 @@ function punyaBidang(opd){ return (BIDANG_OPD[opd]||[]).length>0; }
     </div>
 
     <div class="subtab-nav">
-      <button class="subtab-btn active" id="subtabPL" onclick="switchSubTab('pl')">📦 Pengadaan Langsung</button>
-      <button class="subtab-btn" id="subtabPK" onclick="switchSubTab('pk')">🏗️ Monitoring PK</button>
+      <button class="subtab-btn active" id="subtabPL" onclick="switchSubTab('pl')">📊 Realisasi</button>
+      <button class="subtab-btn" id="subtabPK" onclick="switchSubTab('pk')" style="display:none">🏗️ Monitoring PK</button>
     </div>
 
     <div class="panel" id="panelPK" style="display:none">
@@ -737,29 +763,26 @@ function punyaBidang(opd){ return (BIDANG_OPD[opd]||[]).length>0; }
               <th rowspan="3" style="min-width:88px">RUP</th>
               <th rowspan="3" style="min-width:200px">Nama Pekerjaan</th>
               <th rowspan="3" style="min-width:200px">Bidang</th>
-              <th colspan="2">Lokasi</th>
+              <th colspan="3">Lokasi</th>
               <th rowspan="3" style="min-width:90px">Sumber Dana</th>
               <th rowspan="3" style="min-width:120px">Pagu (Rp)</th>
               <th rowspan="3" style="min-width:120px">Metode Pemilihan</th>
-              <th colspan="2">Rencana Waktu Pelaksanaan</th>
               <th rowspan="3" style="min-width:140px">Nama Penyedia</th>
               <th rowspan="3" style="min-width:125px">Nilai Kontrak</th>
               <th rowspan="3" style="min-width:108px">Tanggal Kontrak</th>
               <th rowspan="3" style="min-width:105px">Waktu Pelaksanaan<br><span style="font-size:8.5px;font-weight:400;opacity:.75">(Hari Kalender)</span></th>
               <th colspan="2">Pelaksanaan Pekerjaan</th>
-              <th colspan="3">Realisasi</th>
+              <th colspan="2">Realisasi</th>
               <th rowspan="3" style="min-width:108px">Penyerahan PHO</th>
               <th rowspan="3" style="min-width:180px">Keterangan</th>
               <th rowspan="3" style="min-width:90px">Update Terakhir</th>
             </tr>
             <tr>
-              <th rowspan="2" style="min-width:120px">Desa / Kelurahan</th>
               <th rowspan="2" style="min-width:110px">Kecamatan</th>
-              <th rowspan="2" style="min-width:70px">Mulai (TW)</th>
-              <th rowspan="2" style="min-width:70px">Selesai (TW)</th>
+              <th rowspan="2" style="min-width:120px">Desa / Kelurahan</th>
+              <th rowspan="2" style="min-width:160px">Detail Alamat</th>
               <th rowspan="2" style="min-width:108px">Mulai</th>
               <th rowspan="2" style="min-width:108px">Selesai</th>
-              <th rowspan="2" style="min-width:72px">% Keuangan</th>
               <th rowspan="2" style="min-width:72px">% Fisik</th>
               <th rowspan="2" style="min-width:180px">Output</th>
             </tr>
@@ -798,8 +821,14 @@ function punyaBidang(opd){ return (BIDANG_OPD[opd]||[]).length>0; }
         <div id="infoTextPL">—</div>
       </div>
       <div class="tbl-title">
-        Paket Pengadaan Langsung
-        <span>Sumber data DATA REALISASI 2026 — Metode: Pengadaan Langsung</span>
+        Data Realisasi Pengadaan
+        <span>Sumber data DATA REALISASI 2026</span>
+      </div>
+      <div class="filter-bar">
+        <label>Jenis Pengadaan</label>
+        <select id="filterJenisPL" onchange="ubahFilterPL()"></select>
+        <label>Metode Pengadaan</label>
+        <select id="filterMetodePL" onchange="ubahFilterPL()"></select>
       </div>
       <div class="tbl-wrap">
         <table class="tbl" id="tablePL">
@@ -810,6 +839,7 @@ function punyaBidang(opd){ return (BIDANG_OPD[opd]||[]).length>0; }
               <th style="min-width:200px">Nama Paket</th>
               <th style="min-width:150px">Bidang</th>
               <th>Jenis</th>
+              <th>Metode</th>
               <th>Sumber Dana</th>
               <th style="min-width:140px">Nama Penyedia</th>
               <th style="min-width:140px">Alamat Penyedia</th>
@@ -982,6 +1012,8 @@ async function doLogin(){
     authToken = data.token;
     authRole  = data.role;
     isAdmin   = data.role==="admin";
+    aturVisibilitasAdminPK();
+    simpanSesi(); tampilkanTombolKeluar();
     document.getElementById("loginOverlay").classList.remove("show");
     if(isAdmin){
       toast("Login admin berhasil — akses semua OPD","success");
@@ -998,6 +1030,13 @@ async function doLogin(){
     document.getElementById("btnLogin").disabled=false;
     document.getElementById("btnLogin").textContent="Masuk →";
   }
+}
+
+/* Monitoring PK cuma untuk admin — OPD biasa tidak pernah lihat sub-tab ini */
+function aturVisibilitasAdminPK(){
+  const btn = document.getElementById("subtabPK");
+  if(btn) btn.style.display = isAdmin ? "" : "none";
+  if(!isAdmin && currentSubTab==="pk") switchSubTab("pl");
 }
 
 /* ── Load & Search ── */
@@ -1030,7 +1069,7 @@ async function _loadDataWithToken(opdKey){
     const json = await res.json();
     if(json.error){
       if(json.error.includes("Sesi habis")||json.error.includes("login ulang")){
-        authToken=""; authRole=""; isAdmin=false;
+        hapusSesi();
         bukaLoginModal(); return;
       }
       throw new Error(json.error);
@@ -1040,11 +1079,13 @@ async function _loadDataWithToken(opdKey){
 
     rawRealisasi = json.realisasi||[];
     rawSheetsPL  = json.sheets_pl||[];
-    paketDataPL  = mergeDataPL(rawRealisasi, rawSheetsPL, allData, opdKey);
-    allDataPL    = paketDataPL;
+    filterJenisPL = ""; filterMetodePL = "";
+    allDataPL    = mergeDataPL(rawRealisasi, rawSheetsPL, allData, opdKey);
+    paketDataPL  = applyFilterPL(allDataPL);
 
     renderAll(); renderAllPL(); showForms(false); cekOrphan();
     switchSubTab("pl");
+    simpanSesi();
     toast("Data berhasil dimuat","success");
   }catch(e){
     setLoading(false);
@@ -1055,7 +1096,7 @@ async function _loadDataWithToken(opdKey){
       `⚠️ Gagal memuat data — <strong>${e.message}</strong><br>`+
       `<span style="font-size:11px;opacity:.8">Periksa koneksi dan pastikan Apps Script sudah di-deploy.</span>`;
     document.getElementById("tbodyMain").innerHTML=
-      `<tr><td colspan="25"><div class="empty"><div class="icon">⚠️</div>`+
+      `<tr><td colspan="21"><div class="empty"><div class="icon">⚠️</div>`+
       `<p style="color:var(--red);font-weight:500">Gagal memuat data</p>`+
       `<p style="font-size:12px;margin-top:6px;color:var(--text-muted)">${e.message}</p></div></td></tr>`;
     toast("Gagal: "+e.message,"error"); return;
@@ -1138,7 +1179,7 @@ function resetSearch(){
   // Kalau allData masih ada, kembalikan tampilan OPD yang sebelumnya di-load
   if(allData.length){
     paketData=[...allData];
-    paketDataPL=[...(allDataPL||[])];
+    paketDataPL=applyFilterPL(allDataPL||[]);
     renderAll(); renderAllPL();
     showForms(false);
     cekOrphan();
@@ -1168,6 +1209,8 @@ function mergeData(dataSirup, dataSheets, dataRealisasi=[]){
   dataSheets.forEach(p=>{ sheetsMap[p.kode_rup]=p; });
   const realisasiMap = {};
   dataRealisasi.forEach(p=>{ realisasiMap[p.kode_rup]=p; });
+  const realisasiByKP = {};
+  dataRealisasi.forEach(p=>{ if(p.kode_paket) realisasiByKP[p.kode_paket]=p; });
 
   // Filter hanya Pekerjaan Konstruksi dari SIRUP
   const sirupKonstruksi = dataSirup.filter(p=>
@@ -1178,7 +1221,8 @@ function mergeData(dataSirup, dataSheets, dataRealisasi=[]){
   // ── Paket normal (masih valid di SIRUP) ──
   const normalPaket = sirupKonstruksi.map(p=>{
     const fromSheet     = sheetsMap[p.kode_rup]     || {};
-    const fromRealisasi = realisasiMap[p.kode_rup]  || {};
+    // Kalau baris PK sudah terkunci ke sebuah Kode Paket, ambil dari transaksi yang persis itu
+    const fromRealisasi = (fromSheet.kode_paket && realisasiByKP[fromSheet.kode_paket]) || realisasiMap[p.kode_rup] || {};
 
     const nama_penyedia = fromRealisasi.nama_penyedia || fromSheet.nama_penyedia || "";
     const nama_penyedia_src = fromRealisasi.nama_penyedia ? "realisasi" : fromSheet.nama_penyedia ? "manual" : "";
@@ -1193,13 +1237,11 @@ function mergeData(dataSirup, dataSheets, dataRealisasi=[]){
       bidang:              fromSheet.bidang              || "",
       desa:                fromSheet.desa                || "",
       kecamatan:           fromSheet.kecamatan           || "",
-      tw_mulai:            fromSheet.tw_mulai            || "",
-      tw_selesai:          fromSheet.tw_selesai          || "",
+      alamat_detail:       fromSheet.alamat_detail       || "",
       tgl_kontrak:         fromSheet.tgl_kontrak         || "",
       waktu_hari:          fromSheet.waktu_hari          || "",
       pelaksanaan_mulai:   fromSheet.pelaksanaan_mulai   || "",
       pelaksanaan_selesai: fromSheet.pelaksanaan_selesai || "",
-      pct_keu:             fromSheet.pct_keu             || "",
       pct_fisik:           fromSheet.pct_fisik           || "",
       output:              fromSheet.output              || "",
       tgl_pho:             fromSheet.tgl_pho             || "",
@@ -1210,6 +1252,8 @@ function mergeData(dataSirup, dataSheets, dataRealisasi=[]){
       program_pokir:       fromSheet.program_pokir       || "",
       program_pokir_src:   fromSheet.program_pokir_src   || "",
       pengusul_pokir:      fromSheet.pengusul_pokir      || "",
+      rup_lama:            fromSheet.rup_lama            || "",
+      kode_paket:          fromSheet.kode_paket          || "",
     };
   });
 
@@ -1231,21 +1275,30 @@ function autoTagPokir(nama){
   return /\((PD|P\d+)\s*-\s*\d+\)\s*$/i.test(nama||"");
 }
 
-/* ── Merge data untuk sub-tab Pengadaan Langsung ── */
+/* ── Merge data untuk sub-tab Realisasi (semua metode, bukan cuma Pengadaan Langsung) ── */
 function mergeDataPL(dataRealisasi, dataSheetsPL, pkData, opdKey){
-  const plRealisasi = (dataRealisasi||[]).filter(r=>
-    r.opd===opdKey && (r.metode||"").toLowerCase()==="pengadaan langsung"
-  );
+  const plRealisasi = (dataRealisasi||[]).filter(r=> r.opd===opdKey);
 
-  const pkByRup = {};
-  (pkData||[]).forEach(p=>{ if(p.kode_rup && !p.orphan) pkByRup[p.kode_rup]=p; });
+  // Penghubung ke baris PK (satu baris per paket di PK_ALL):
+  //  1) kode_paket — stabil. Begitu baris PK "terkunci" ke sebuah Kode Paket, Realisasi
+  //     selalu menemukannya lewat sini, TERMASUK saat RUP berubah dan baris PK jadi
+  //     orphan (merah di Monitoring PK) — isian OPD tetap muncul di Realisasi.
+  //  2) kode_rup — hanya untuk penautan pertama: baris PK yang belum terkunci, atau
+  //     kuncinya sudah tidak ada di Realisasi. Terkunci ke kode_paket saat disimpan.
+  const kpRealisasiAll = new Set((dataRealisasi||[]).map(r=>r.kode_paket));
+  const pkByKP = {}, pkByRup = {};
+  (pkData||[]).forEach(p=>{
+    if(p.kode_paket && !pkByKP[p.kode_paket]) pkByKP[p.kode_paket]=p;
+    const bebas = !p.kode_paket || !kpRealisasiAll.has(p.kode_paket);
+    if(bebas && p.kode_rup && !pkByRup[p.kode_rup]) pkByRup[p.kode_rup]=p;
+  });
 
   const sheetsPLMap = {};
   (dataSheetsPL||[]).forEach(p=>{ sheetsPLMap[p.kode_paket]=p; });
 
   const normalPL = plRealisasi.map((r)=>{
-    const isKonstruksi = (r.jenis||"").toLowerCase().includes("konstruksi");
-    const pk     = isKonstruksi && r.kode_rup ? pkByRup[r.kode_rup] : null;
+    const rupList = String(r.kode_rup||"").split(";").map(x=>x.trim()).filter(Boolean);
+    const pk     = pkByKP[r.kode_paket] || rupList.map(x=>pkByRup[x]).find(Boolean) || null;
     const linked = !!pk;
     const sheetPL = sheetsPLMap[r.kode_paket] || {};
     const src    = linked ? pk : sheetPL;
@@ -1258,10 +1311,12 @@ function mergeDataPL(dataRealisasi, dataSheetsPL, pkData, opdKey){
 
     return {
       linked,
+      pk_rup:      linked ? pk.kode_rup : "",   // kunci baris PK yang sebenarnya
       kode_paket:  r.kode_paket,
       kode_rup:    r.kode_rup,
       nama:        r.nama,
       jenis:       r.jenis,
+      metode:      r.metode,
       sumber_dana: r.sumber_dana,
       nama_penyedia: r.nama_penyedia,
       nilai:       r.total_nilai,
@@ -1281,7 +1336,7 @@ function mergeDataPL(dataRealisasi, dataSheetsPL, pkData, opdKey){
     };
   });
 
-  // ── Orphan PL: tersimpan di sheet PL tapi Kode Paket-nya sudah tidak ada di Realisasi (PL) ──
+  // ── Orphan PL: tersimpan di sheet PL tapi Kode Paket-nya sudah tidak ada di Realisasi ──
   const kpRealisasi = new Set(plRealisasi.map(r=>r.kode_paket));
   const orphanPL = (dataSheetsPL||[])
     .filter(p=>!kpRealisasi.has(p.kode_paket))
@@ -1294,6 +1349,7 @@ function mergeDataPL(dataRealisasi, dataSheetsPL, pkData, opdKey){
         kode_rup:    p.kode_rup,
         nama:        p.nama || "(Nama paket tidak tersedia)",
         jenis:       p.jenis,
+        metode:      p.metode,
         sumber_dana: p.sumber_dana,
         nama_penyedia: "",
         nilai:       p.nilai,
@@ -1318,10 +1374,52 @@ function mergeDataPL(dataRealisasi, dataSheetsPL, pkData, opdKey){
   return [...orphanPL, ...normalPL].map((p,i)=>({ ...p, no: i+1 }));
 }
 
+let filterJenisPL = "", filterMetodePL = "";
+
+const FILTER_KOSONG = "__KOSONG__";   // nilai khusus untuk opsi "(Kosong)"
+const kosongPL = v => !String(v==null?"":v).trim();
+
+function opsiUnikPL(field){
+  const set = new Set();
+  (allDataPL||[]).forEach(p=>{ if(!kosongPL(p[field])) set.add(p[field]); });
+  return [...set].sort((a,b)=>a.localeCompare(b,"id"));
+}
+function adaKosongPL(field){
+  return (allDataPL||[]).some(p=>kosongPL(p[field]));
+}
+
+function populateFilterPL(){
+  const selJ = document.getElementById("filterJenisPL");
+  const selM = document.getElementById("filterMetodePL");
+  if(!selJ || !selM) return;
+  const opsi = (field, aktif) =>
+    opsiUnikPL(field).map(v=>`<option value="${v}"${v===aktif?" selected":""}>${v}</option>`).join("") +
+    (adaKosongPL(field) ? `<option value="${FILTER_KOSONG}"${aktif===FILTER_KOSONG?" selected":""}>(Kosong)</option>` : "");
+  selJ.innerHTML = `<option value="">— Semua Jenis Pengadaan —</option>` + opsi("jenis",  filterJenisPL);
+  selM.innerHTML = `<option value="">— Semua Metode —</option>`          + opsi("metode", filterMetodePL);
+}
+
+function applyFilterPL(list){
+  const cocok = (nilai, filter) =>
+    !filter || (filter===FILTER_KOSONG ? kosongPL(nilai) : nilai===filter);
+  return (list||[]).filter(p=>
+    cocok(p.jenis,  filterJenisPL) &&
+    cocok(p.metode, filterMetodePL)
+  );
+}
+
+function ubahFilterPL(){
+  filterJenisPL  = document.getElementById("filterJenisPL").value;
+  filterMetodePL = document.getElementById("filterMetodePL").value;
+  paketDataPL = applyFilterPL(allDataPL);
+  currentPagePL = 1;
+  renderPagePL();
+}
+
 /* Hitung ulang data PL dari raw data (dipakai setelah simpan / hapus / perbarui) */
 function recomputePL(){
   allDataPL   = mergeDataPL(rawRealisasi, rawSheetsPL, allData, selectedOPD);
-  paketDataPL = [...allDataPL];
+  paketDataPL = applyFilterPL(allDataPL);
 }
 
 /* Warning orphan khusus sub-tab Pengadaan Langsung (tampil di dalam panel PL saja) */
@@ -1346,9 +1444,11 @@ function switchSubTab(tab){
   document.getElementById("panelPK").style.display = tab==="pk" ? "" : "none";
   document.getElementById("panelPL").style.display = tab==="pl" ? "" : "none";
   updateInfoBarVisibility(); // BARU
+  simpanSesi();
 }
 
 function renderAllPL(){
+  populateFilterPL();
   currentPagePL = 1;
   renderPagePL();
   cekOrphanPL();
@@ -1360,7 +1460,7 @@ function renderPagePL(){
   const total = paketDataPL.length;
 
   if(!total){
-    tb.innerHTML = `<tr><td colspan="18"><div class="empty"><div class="icon">📦</div><p>Tidak ada paket Pengadaan Langsung</p></div></td></tr>`;
+    tb.innerHTML = `<tr><td colspan="19"><div class="empty"><div class="icon">📊</div><p>Tidak ada data realisasi</p></div></td></tr>`;
     document.getElementById("pagingBarPL").style.display="none";
     return;
   }
@@ -1407,6 +1507,7 @@ function renderPagePL(){
       <td style="min-width:200px">${namaCellPL}</td>
       <td style="min-width:150px">${txt(p.bidang,"-")}</td>
       <td style="font-size:11px;text-align:center">${txt(p.jenis)}</td>
+      <td style="font-size:11px;text-align:center">${txt(p.metode)}</td>
       <td style="font-size:11px;text-align:center">${txt(p.sumber_dana)}</td>
       <td style="text-align:center">${txt(p.nama_penyedia)}</td>
       <td style="min-width:140px">${txt(p.alamat_penyedia)}</td>
@@ -1478,7 +1579,8 @@ function refreshInfoBar(){
     bar.classList.add("warn"); if(dot) dot.style.background="#8B1A1A";
     txt.innerHTML =
       `⚠️ Ditemukan <strong>${nOrphan} paket</strong> yang nomor RUP-nya tidak lagi ada di SIRUP. `+
-      `Kemungkinan RUP telah diubah. Baris berwarna merah — klik <strong>"Perbarui RUP"</strong> pada baris tersebut.`;
+      `Isian OPD pada paket ini mungkin tidak lagi relevan dengan data RUP terbaru. `+
+      `Baris berwarna merah — periksa, lalu klik <strong>"Perbarui RUP"</strong> atau hapus jika sudah tidak dipakai.`;
   } else {
     bar.classList.remove("warn"); if(dot) dot.style.background="";
     txt.innerHTML = "<strong>"+lbl+"</strong> — "+(paketData||[]).length+" paket konstruksi (SiRUP) &nbsp;&nbsp;"
@@ -1527,7 +1629,7 @@ function renderPage(){
   const total = paketData.length;
 
   if(!total){
-    tb.innerHTML=`<tr><td colspan="25"><div class="empty"><div class="icon">📋</div><p>Tidak ada data paket</p></div></td></tr>`;
+    tb.innerHTML=`<tr><td colspan="21"><div class="empty"><div class="icon">📋</div><p>Tidak ada data paket</p></div></td></tr>`;
     document.getElementById("pagingBar").style.display="none";
     return;
   }
@@ -1554,7 +1656,7 @@ function renderPage(){
 
     // ── Nama cell ──
     // Orphan: nama tidak bisa diklik — harus perbarui RUP dulu
-    const sudahDiisi = !!(p.bidang||p.tgl_kontrak||p.pct_keu||p.pct_fisik||p.nama_penyedia);
+    const sudahDiisi = !!(p.bidang||p.tgl_kontrak||p.pct_fisik||p.nama_penyedia);
     const namaCell = isOrphan
       ? `<span style="font-size:12px;font-weight:500;color:#8B1A1A;display:block;line-height:1.4">${p.nama}</span>
          <span style="font-size:10px;color:#8B1A1A;opacity:.7;font-style:italic">⚠ Perbarui RUP sebelum dapat mengedit</span>`
@@ -1597,21 +1699,12 @@ function renderPage(){
         : `<div style="margin-top:4px;font-size:10px;font-family:var(--mono);color:#1A3F6F;background:#EBF4FF;border:1px solid #B3D1F5;border-radius:3px;padding:1px 6px;display:inline-block">🔵 Non-Transaksional</div>`
       : "";
 
-    // ── Progress bar ──
-    const keu   = parseFloat(p.pct_keu)||0;
+    // ── Progress bar (fisik saja) ──
     const fisik = parseFloat(p.pct_fisik)||0;
 
-    const pctKeuCell = `
-      <div style="font-size:12px;text-align:center;color:${keu?'var(--text)':'var(--text-light)'}">${keu?keu+"%":"—"}</div>
-      <div class="pct-bar-bg"><div class="pct-bar" style="width:${keu}%;background:var(--green)"></div></div>`;
     const pctFisikCell = `
       <div style="font-size:12px;text-align:center;color:${fisik?'var(--text)':'var(--text-light)'}">${fisik?fisik+"%":"—"}</div>
       <div class="pct-bar-bg"><div class="pct-bar" style="width:${fisik}%;background:var(--blue)"></div></div>`;
-
-    // ── TW display ──
-    const twVal = (v) => v
-      ? `<span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text)">${v}</span>`
-      : `<span style="color:var(--text-light);font-size:11px">—</span>`;
 
     // ── Tanggal display ──
     const tgl = (v) => v
@@ -1629,8 +1722,9 @@ function renderPage(){
       <td class="rup-col">${rupCell}</td>
       <td style="min-width:200px">${namaCell}</td>
       <td style="min-width:200px">${txt(p.bidang,"-")}</td>
-      <td style="min-width:120px;text-align:center">${txt(p.desa)}</td>
       <td style="min-width:110px;text-align:center">${txt(p.kecamatan)}</td>
+      <td style="min-width:120px;text-align:center">${txt(p.desa)}</td>
+      <td style="min-width:160px">${txt(p.alamat_detail)}</td>
       <td style="font-size:12px;white-space:nowrap;text-align:center;color:${p.sumber_dana?'var(--text)':'var(--text-light)'}">${p.sumber_dana||'—'}</td>
       <td style="font-size:12px;font-family:var(--mono);text-align:right;white-space:nowrap">${fmtPagu(p.pagu)}</td>
       <td>
@@ -1638,8 +1732,6 @@ function renderPage(){
           ${metodeBadge}${plExtra}
         </div>
       </td>
-      <td style="text-align:center">${twVal(p.tw_mulai)}</td>
-      <td style="text-align:center">${twVal(p.tw_selesai)}</td>
       <td style="text-align:center">${penyediaCell}</td>
       <td style="text-align:right">${nilaiKontrakCell}</td>
       <td style="text-align:center">${tgl(p.tgl_kontrak)}</td>
@@ -1650,7 +1742,6 @@ function renderPage(){
       </td>
       <td style="text-align:center">${tgl(p.pelaksanaan_mulai)}</td>
       <td style="text-align:center">${tgl(p.pelaksanaan_selesai)}</td>
-      <td>${pctKeuCell}</td>
       <td>${pctFisikCell}</td>
       <td style="min-width:180px">${txt(p.output)}</td>
       <td style="text-align:center">${tgl(p.tgl_pho)}</td>
@@ -1668,9 +1759,9 @@ let _detailIdx = null;
 /* Cek apakah paket sudah punya data input dari OPD — dipakai buat nampilin/nyembunyiin tombol Hapus Data Input */
 function adaDataInputPK(p){
   return !!(
-    p.bidang||p.desa||p.kecamatan||p.tw_mulai||p.tw_selesai||
+    p.bidang||p.desa||p.kecamatan||p.alamat_detail||
     p.nama_penyedia||p.nilai_kontrak||p.tgl_kontrak||p.waktu_hari||
-    p.pelaksanaan_mulai||p.pelaksanaan_selesai||p.pct_keu||p.pct_fisik||
+    p.pelaksanaan_mulai||p.pelaksanaan_selesai||p.pct_fisik||
     p.output||p.tgl_pho||p.keterangan||p.jenis_pl
   );
 }
@@ -1719,27 +1810,20 @@ function bukaDetailModal(i){
     </div>
 
     <div class="detail-field">
-      <label>Desa / Kelurahan <span class="req-tag">*</span></label>
-      <input type="text" id="d_desa" value="${p.desa||''}" placeholder="Nama desa/kelurahan">
-    </div>
-    <div class="detail-field">
       <label>Kecamatan <span class="req-tag">*</span></label>
-      <input type="text" id="d_kecamatan" value="${p.kecamatan||''}" placeholder="Nama kecamatan">
-    </div>
-
-    <div class="detail-field">
-      <label>Rencana Mulai (TW) <span class="req-tag">*</span></label>
-      <select id="d_tw_mulai" style="color:${p.tw_mulai?'var(--text)':'var(--text-light)'}">
-        <option value="" style="color:var(--text-light)">— Pilih —</option>
-        ${["I","II","III","IV"].map(tw=>`<option value="${tw}" style="color:var(--text)"${p.tw_mulai===tw?" selected":""}>${tw}</option>`).join("")}
+      <select id="d_kecamatan" style="color:${p.kecamatan?'var(--text)':'var(--text-light)'}">
+        <option value="" style="color:var(--text-light)">— Pilih Kecamatan —</option>
+        ${KECAMATAN_LIST.map(k=>`<option value="${k}" style="color:var(--text)"${p.kecamatan===k?' selected':''}>${k}</option>`).join('')}
       </select>
     </div>
     <div class="detail-field">
-      <label>Rencana Selesai (TW) <span class="req-tag">*</span></label>
-      <select id="d_tw_selesai" style="color:${p.tw_selesai?'var(--text)':'var(--text-light)'}">
-        <option value="" style="color:var(--text-light)">— Pilih —</option>
-        ${["I","II","III","IV"].map(tw=>`<option value="${tw}" style="color:var(--text)"${p.tw_selesai===tw?" selected":""}>${tw}</option>`).join("")}
-      </select>
+      <label>Desa / Kelurahan <span class="req-tag">*</span></label>
+      <input type="text" id="d_desa" list="dlDesaPK" autocomplete="off" value="${p.desa||''}" placeholder="Pilih kecamatan dulu, lalu ketik/pilih desa">
+      <datalist id="dlDesaPK"></datalist>
+    </div>
+    <div class="detail-field full">
+      <label>Detail Alamat</label>
+      <input type="text" id="d_alamat_detail" value="${p.alamat_detail||''}" placeholder="Nama jalan, RT/RW, patokan, dll">
     </div>
 
     ${isPL?`
@@ -1795,15 +1879,6 @@ function bukaDetailModal(i){
     <div class="detail-section-title">📊 Realisasi</div>
 
     <div class="detail-field">
-      <label>% Keuangan</label>
-      <div class="detail-pct-wrap">
-        <input type="number" id="d_pct_keu" value="${p.pct_keu||''}" min="0" max="100" placeholder="0"
-          oninput="updDetailBar(this,'dbar_keu','var(--green)')">
-        <em>%</em>
-      </div>
-      <div class="detail-pct-bar"><div class="detail-pct-fill" id="dbar_keu" style="width:${p.pct_keu||0}%;background:var(--green)"></div></div>
-    </div>
-    <div class="detail-field">
       <label>% Fisik</label>
       <div class="detail-pct-wrap">
         <input type="number" id="d_pct_fisik" value="${p.pct_fisik||''}" min="0" max="100" placeholder="0"
@@ -1828,15 +1903,17 @@ function bukaDetailModal(i){
     </div>
   `;
 
-  // Pasang event onchange untuk TW select agar warna update
-  ["d_bidang","d_tw_mulai","d_tw_selesai","d_jenis_pl"].forEach(id=>{
+  // Pasang event onchange untuk select agar warna update
+  ["d_bidang","d_kecamatan","d_jenis_pl"].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.onchange=function(){
       this.style.color=this.value?'var(--text)':'var(--text-light)';
       // pastikan semua option tetap hitam
       this.querySelectorAll('option:not([value=""])').forEach(o=>o.style.color='var(--text)');
+      if(id==="d_kecamatan") updateDesaOptionsPK();
     };
   });
+  updateDesaOptionsPK();
 
   resetHapusInputPK();
   document.getElementById("btnHapusInputPKFooter").style.display = adaDataInputPK(p) ? "" : "none";
@@ -2094,10 +2171,11 @@ async function simpanPL(){
   try{
     if(p.linked){
       // ── Tulis ke row Monitoring PK yang sama (satu sumber data, bukan row terpisah) ──
-      const idxPK = paketData.findIndex(x=>x.kode_rup===p.kode_rup && !x.orphan);
+      const idxPK = allData.findIndex(x=>x.kode_rup===p.pk_rup);
       if(idxPK===-1) throw new Error("Paket terkait di Monitoring PK tidak ditemukan");
 
-      Object.assign(paketData[idxPK], {
+      Object.assign(allData[idxPK], {
+        kode_paket:          p.kode_paket,     // kunci baris PK ke paket Realisasi ini
         bidang:              detail.bidang,
         alamat_penyedia:     detail.alamat_penyedia,
         pelaksanaan_mulai:   detail.tgl_mulai,
@@ -2112,8 +2190,8 @@ async function simpanPL(){
       });
 
       const payload = {
-        action: "saveData", opd: paketData[idxPK].opd || selectedOPD,
-        updated: now, token: authToken, data: [{ ...paketData[idxPK] }]
+        action: "saveData", opd: allData[idxPK].opd || selectedOPD,
+        updated: now, token: authToken, data: [{ ...allData[idxPK] }]
       };
       const res = await fetch(APPS_SCRIPT_URL, {method:"POST", body:JSON.stringify(payload)});
       const r   = await res.json();
@@ -2123,7 +2201,7 @@ async function simpanPL(){
       // ── Standalone: tulis ke sheet PL ──
       const rowData = {
         kode_paket: p.kode_paket, kode_rup: p.kode_rup||"",
-        nama: p.nama, jenis: p.jenis, metode: p.metode||"Pengadaan Langsung",
+        nama: p.nama, jenis: p.jenis, metode: p.metode||"",
         sumber_dana: p.sumber_dana, nilai: p.nilai,
         pagu_manual: paguManual.replace(/\D/g,""),
         ...detail,
@@ -2148,7 +2226,7 @@ async function simpanPL(){
 
   }catch(e){
     if(e.message.includes("Sesi habis")||e.message.includes("login ulang")){
-      authToken=""; authRole=""; isAdmin=false; bukaLoginModal();
+      hapusSesi(); bukaLoginModal();
     }
     toast("Gagal menyimpan: "+e.message,"error");
   }finally{
@@ -2184,8 +2262,7 @@ function _collectDetail(){
     bidang:              g("d_bidang"),
     desa:                g("d_desa"),
     kecamatan:           g("d_kecamatan"),
-    tw_mulai:            g("d_tw_mulai"),
-    tw_selesai:          g("d_tw_selesai"),
+    alamat_detail:       g("d_alamat_detail"),
     jenis_pl:            isPL ? g("d_jenis_pl") : (pPrev.jenis_pl||""),
     // Nama penyedia & nilai kontrak: kalau dari realisasi, pakai nilai existing
     nama_penyedia:       pPrev.nama_penyedia_src==="realisasi" ? (pPrev.nama_penyedia||"") : g("d_nama_penyedia"),
@@ -2194,7 +2271,6 @@ function _collectDetail(){
     waktu_hari:          g("d_waktu_hari"),
     pelaksanaan_mulai:   g("d_pelaksanaan_mulai"),
     pelaksanaan_selesai: g("d_pelaksanaan_selesai"),
-    pct_keu:             g("d_pct_keu"),
     pct_fisik:           g("d_pct_fisik"),
     output:              g("d_output"),
     tgl_pho:             g("d_tgl_pho"),
@@ -2212,10 +2288,8 @@ async function simpanDetail(){
   // ── Validasi field wajib ──
   const wajib = [
     ...(punyaBidang(paketData[_detailIdx].opd||selectedOPD)?[{id:"d_bidang", label:"Bidang"}]:[]),
-    {id:"d_desa",         label:"Desa / Kelurahan"},
     {id:"d_kecamatan",    label:"Kecamatan"},
-    {id:"d_tw_mulai",     label:"Rencana Mulai (TW)"},
-    {id:"d_tw_selesai",   label:"Rencana Selesai (TW)"},
+    {id:"d_desa",         label:"Desa / Kelurahan"},
     {id:"d_tgl_kontrak",  label:"Tanggal Kontrak"},
     {id:"d_waktu_hari",   label:"Waktu Pelaksanaan"},
     ...(isPL?[{id:"d_jenis_pl", label:"Jenis Transaksi"}]:[]),
@@ -2290,9 +2364,10 @@ async function simpanDetail(){
     document.getElementById("headerUpdate").textContent = "Update: "+fmtUpdated(now);
     tutupDetailModal();
     renderPage(); // refresh tabel untuk update status badge
+    recomputePL(); renderAllPL();
   }catch(e){
     if(e.message.includes("Sesi habis")||e.message.includes("login ulang")){
-      authToken=""; authRole=""; isAdmin=false; bukaLoginModal();
+      hapusSesi(); bukaLoginModal();
     }
     toast("Gagal menyimpan: "+e.message,"error");
   }finally{
@@ -2446,13 +2521,14 @@ async function konfirmasiHapusInputPK(){
     if(!r.success) throw new Error(r.error||"Gagal menghapus data input");
 
     Object.assign(paketData[_detailIdx], {
-      bidang:"", desa:"", kecamatan:"", tw_mulai:"", tw_selesai:"",
+      kode_paket:"",
+      bidang:"", desa:"", kecamatan:"", alamat_detail:"",
       nama_penyedia: p.nama_penyedia_src==="realisasi" ? p.nama_penyedia : "",
       nama_penyedia_src: p.nama_penyedia_src==="realisasi" ? "realisasi" : "",
       nilai_kontrak: p.nilai_kontrak_src==="realisasi" ? p.nilai_kontrak : "",
       nilai_kontrak_src: p.nilai_kontrak_src==="realisasi" ? "realisasi" : "",
       tgl_kontrak:"", waktu_hari:"", pelaksanaan_mulai:"", pelaksanaan_selesai:"",
-      pct_keu:"", pct_fisik:"", output:"", tgl_pho:"", keterangan:"", jenis_pl:"",
+      pct_fisik:"", output:"", tgl_pho:"", keterangan:"", jenis_pl:"",
       alamat_penyedia:"", program_pokir:"", program_pokir_src:"", pengusul_pokir:"",
       updated:"",
     });
@@ -2506,17 +2582,18 @@ async function konfirmasiHapusInputPL(){
 
     if(p.linked){
       const res = await fetch(APPS_SCRIPT_URL, {method:"POST", body:JSON.stringify({
-        action: "clearInputPK", opd: opdCek, kode_rup: p.kode_rup, token: authToken
+        action: "clearInputPK", opd: opdCek, kode_rup: p.pk_rup, token: authToken
       })});
       const r = await res.json();
       if(!r.success) throw new Error(r.error||"Gagal menghapus data input");
 
-      const idxPK = paketData.findIndex(x=>x.kode_rup===p.kode_rup && !x.orphan);
+      const idxPK = allData.findIndex(x=>x.kode_rup===p.pk_rup);
       if(idxPK>-1){
-        Object.assign(paketData[idxPK], {
-          bidang:"", desa:"", kecamatan:"", tw_mulai:"", tw_selesai:"",
+        Object.assign(allData[idxPK], {
+          kode_paket:"",
+          bidang:"", desa:"", kecamatan:"", alamat_detail:"",
           tgl_kontrak:"", waktu_hari:"", pelaksanaan_mulai:"", pelaksanaan_selesai:"",
-          pct_keu:"", pct_fisik:"", output:"", tgl_pho:"", keterangan:"", jenis_pl:"",
+          pct_fisik:"", output:"", tgl_pho:"", keterangan:"", jenis_pl:"",
           alamat_penyedia:"", program_pokir:"", program_pokir_src:"", pengusul_pokir:"",
           updated:"",
         });
@@ -2964,7 +3041,7 @@ function renderDashboard(){
     <div class="dash-card amber">
       <div class="dash-label">Rata-rata Progress</div>
       <div class="dash-value">${fmtPct(summary.avg_pct_fisik)}</div>
-      <div class="dash-sub">Fisik &nbsp;·&nbsp; Keuangan ${fmtPct(summary.avg_pct_keu)}</div>
+      <div class="dash-sub">Realisasi Fisik</div>
     </div>
     <div class="dash-card ${summary.total_orphan>0?'red':''}">
       <div class="dash-label">RUP Perlu Diperbarui</div>
@@ -3002,7 +3079,6 @@ function renderDashboard(){
       <div class="dash-opd-detail" id="dashDetail_${idx}">
         <div class="dash-opd-detail-row"><span>Pagu Total</span><strong>Rp ${fmtPagu(o.pagu)}</strong></div>
         <div class="dash-opd-detail-row"><span>Nilai Kontrak</span><strong>Rp ${fmtPagu(o.nilai_kontrak)}</strong></div>
-        <div class="dash-opd-detail-row"><span>Rata-rata % Keuangan</span><strong>${fmtPct(o.avg_pct_keu)}</strong></div>
         <div class="dash-opd-detail-row"><span>Rata-rata % Fisik</span><strong>${fmtPct(o.avg_pct_fisik)}</strong></div>
         <div class="dash-opd-detail-row"><span>Paket Orphan (RUP berubah)</span><strong style="color:${hasOrphan?'var(--red)':'var(--text)'}">${o.orphan}</strong></div>
       </div>
@@ -3017,6 +3093,60 @@ function toggleDashCard(idx){
   detail.classList.toggle("show", !isOpen);
   card.classList.toggle("expanded", !isOpen);
 }
+
+/* ══════════════ SESI LOGIN (bertahan saat refresh) ══════════════
+   Token disimpan di sessionStorage: selamat dari refresh, hilang saat tab ditutup.
+   Token tetap divalidasi server (berlaku 8 jam) — kalau sudah habis, user diminta login ulang. */
+const SESI_KEY = "dibangunin_sesi_v1";
+
+function simpanSesi(){
+  if(!authToken) return;
+  try{
+    sessionStorage.setItem(SESI_KEY, JSON.stringify({
+      token: authToken, role: authRole, opd: selectedOPD, subtab: currentSubTab
+    }));
+  }catch(e){}
+}
+
+function hapusSesi(){
+  authToken=""; authRole=""; isAdmin=false;
+  try{ sessionStorage.removeItem(SESI_KEY); }catch(e){}
+  const b = document.getElementById("btnKeluar");
+  if(b) b.style.display="none";
+}
+
+function tampilkanTombolKeluar(){
+  const b = document.getElementById("btnKeluar");
+  if(b) b.style.display = authToken ? "" : "none";
+}
+
+function keluar(){
+  hapusSesi();
+  location.reload();
+}
+
+async function restoreSesi(){
+  let d = null;
+  try{ d = JSON.parse(sessionStorage.getItem(SESI_KEY)||"null"); }catch(e){}
+  if(!d || !d.token) return;
+
+  authToken = d.token;
+  authRole  = d.role || "";
+  isAdmin   = authRole==="admin";
+  aturVisibilitasAdminPK();
+  tampilkanTombolKeluar();
+
+  if(d.opd){
+    const o = OPD_LIST.find(x=>x.key===d.opd);
+    document.getElementById("opdSelect").value = d.opd;
+    document.getElementById("opdInput").value  = o ? o.label : d.opd;
+    selectedOPD = d.opd;
+    await _loadDataWithToken(d.opd);          // kalau token sudah habis -> otomatis minta login ulang
+    if(authToken && d.subtab && (d.subtab!=="pk" || isAdmin)) switchSubTab(d.subtab);
+  }
+}
+
+restoreSesi();
 </script>
 </body>
 </html>
